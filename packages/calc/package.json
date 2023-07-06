@@ -1,0 +1,10 @@
+{
+    "name": "@protowallet/calc",
+    "version": "1.0.0",
+    "description": "Calculations and analytics for protowallet",
+    "main": "./dist/index.cjs",
+    "module": "./dist/index.mjs",
+    "typings": "./dist/index.d.ts",
+    "license": "MIT",
+    "private": false
+}
