@@ -1,0 +1,11 @@
+import React from "react";
+import { IconProps } from "./props";
+
+// stroke={props.strokeColor || "currentColor"}
+
+const XYZIcon = (props: IconProps) => {
+    return (
+
+    );
+}
+export default XYZIcon;
