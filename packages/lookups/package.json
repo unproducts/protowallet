@@ -1,0 +1,13 @@
+{
+  "name": "@protowallet/lookups",
+  "version": "1.0.0",
+  "description": "Enums and other lookups for the ProtoWallet",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "typings": "./dist/index.d.ts",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "build": "tsc"
+  }
+}
