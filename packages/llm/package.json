@@ -1,0 +1,10 @@
+{
+  "name": "@protowallet/llm",
+  "version": "1.0.0",
+  "description": "Large Language Model integrations for Protowallet",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "typings": "./dist/index.d.ts",
+  "license": "MIT",
+  "private": false
+}
