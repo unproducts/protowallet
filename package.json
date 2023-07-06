@@ -6,6 +6,10 @@
   "author": "Aman Desai(amandesai01@gmail.com), Utsav Unadkat(utsavunadkat99@gmail.com)",
   "license": "MIT",
   "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
     "build": "lerna run build"
   },
