@@ -1,25 +1,22 @@
 import { RecordType } from '@protowallet/lookups';
-import { RecurringEntity } from './base';
+import { GeneralTimestamedEntity, IdEntity, RecurringEntity } from './base';
 import { Amount } from './general';
 
 export type Transaction = {
-  id: string;
-  accountId: string;
+  accountId: number;
   type: RecordType;
   category: number;
   amount: Amount;
   note?: string;
-  labels?: string[];
-  timestamp: number;
+  labels: number[];
 
   isRecurringTransaction: boolean;
-};
+} & IdEntity & GeneralTimestamedEntity;
 
 export type RecurringTransaction = {
-  id: string;
-  accountId: string;
+  accountId: number;
   type: RecordType;
   category: number;
   amount: Amount;
-  labels?: string[];
-} & RecurringEntity;
+  labels: string[];
+} & RecurringEntity & IdEntity & GeneralTimestamedEntity;
