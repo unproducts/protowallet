@@ -21,7 +21,7 @@ export class CategoryRepository extends AbstractRepositoryAdapter<Category> {
       parent: options.parent || 0,
       logoId: options.logoId || 0,
     };
-    return this.save(category);
+    return this._save(category);
   }
 
   async update(options: UpdateCategoryOptions): Promise<Category> {
@@ -31,7 +31,7 @@ export class CategoryRepository extends AbstractRepositoryAdapter<Category> {
     }
     category.title = options.title || category.title;
     category.description = options.description || category.description;
-    return this.update(category);
+    return this._update(category);
   }
 
   async validate(entity: Category): Promise<void> {

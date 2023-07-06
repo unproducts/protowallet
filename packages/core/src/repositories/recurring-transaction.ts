@@ -1,0 +1,69 @@
+import { IdEntity, RecurringTransaction } from '@protowallet/types';
+import { AbstractRepositoryAdapter } from './base';
+import { EntityNotFoundException, EntityNotValidException, utils } from '@protowallet/common';
+import { AccountRepository } from './account';
+import { EndRecurrenceBy } from '@protowallet/lookups';
+
+export type CreateRecurringTransactionOptions = Omit<RecurringTransaction, 'id'>;
+export type UpdateRecurringTransactionOptions = Partial<RecurringTransaction> & IdEntity;
+
+export class RecurringTransactionRepository extends AbstractRepositoryAdapter<RecurringTransaction> {
+  protected accountsRepository: AccountRepository;
+
+  constructor(feed: Collection<RecurringTransaction>, accountsRepository: AccountRepository) {
+    super(feed);
+    this.accountsRepository = accountsRepository;
+  }
+
+  async create(options: CreateRecurringTransactionOptions): Promise<RecurringTransaction> {
+    const transaction: RecurringTransaction = {
+      ...options,
+      id: utils.generateRandomId(),
+    };
+    return this._save(transaction);
+  }
+
+  async update(options: UpdateRecurringTransactionOptions): Promise<RecurringTransaction> {
+    const transaction = await this.get(options.id);
+    if (!transaction) {
+      throw EntityNotFoundException('RecurringTransaction', options.id);
+    }
+    transaction.accountId = options.accountId || transaction.accountId;
+    transaction.type = options.type || transaction.type;
+    transaction.category = options.category || transaction.category;
+    transaction.amount = options.amount || transaction.amount;
+    transaction.labels = options.labels || transaction.labels;
+    transaction.endTokenType = options.endTokenType || transaction.endTokenType;
+    transaction.endToken = options.endToken || transaction.endToken;
+    return this._update(transaction);
+  }
+
+  async validate(entity: RecurringTransaction): Promise<void> {
+    const case1 = !!(entity.id && entity.id > 0);
+    const case2 = !!(entity.accountId && entity.accountId > 0);
+    const case3 = !!(entity.type && entity.type >= 0);
+    const case4 = !!(entity.category && entity.category >= 0);
+    const case5 = !!entity.amount;
+    const case6 = !!entity.createdAt;
+    const case7 = entity.endTokenType >= 0;
+
+    let caseValidEndRecurrenceBy = false;
+    if (entity.endTokenType === EndRecurrenceBy.Count) {
+      caseValidEndRecurrenceBy = typeof entity.endToken === 'number' && entity.endToken > 0;
+    } else if (entity.endTokenType === EndRecurrenceBy.EndDate) {
+      caseValidEndRecurrenceBy = typeof entity.endToken === 'object' && !!entity.endToken;
+    } else if (entity.endTokenType === EndRecurrenceBy.NeverEnd) {
+      caseValidEndRecurrenceBy = true;
+    }
+
+    const isValidPartial = case1 && case2 && case3 && case4 && case5 && case6 && case7 && caseValidEndRecurrenceBy;
+    if (!isValidPartial) {
+      throw EntityNotValidException('RecurringTransaction', entity);
+    }
+
+    const account = await this.accountsRepository.get(entity.accountId);
+    if (!account) {
+      throw EntityNotFoundException('Account', entity.accountId);
+    }
+  }
+}

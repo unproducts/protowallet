@@ -50,7 +50,7 @@ export abstract class AbstractRepositoryAdapter<T extends IdEntity> implements R
         return this.feed;
     }
 
-    protected async save(entity: T): Promise<T> {
+    protected async _save(entity: T): Promise<T> {
         await this.validate(entity);
         const savedEntity = this.feed.insert(entity);
         if (savedEntity) {
@@ -59,7 +59,7 @@ export abstract class AbstractRepositoryAdapter<T extends IdEntity> implements R
         throw EntityCreationException(this.feed.name);
     }
 
-    protected async update(entity: T): Promise<T> {
+    protected async _update(entity: T): Promise<T> {
         await this.validate(entity);
         const updatedEntity = this.feed.update(entity);
         if (updatedEntity) {

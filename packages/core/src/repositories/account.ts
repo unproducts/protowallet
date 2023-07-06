@@ -27,7 +27,7 @@ export class AccountRepository extends AbstractRepositoryAdapter<Account> {
       createdAt: new Date(),
     };
 
-    return this.save(account);
+    return this._save(account);
   }
 
   async update(options: UpdateAccountOptions): Promise<Account> {
@@ -36,7 +36,7 @@ export class AccountRepository extends AbstractRepositoryAdapter<Account> {
       throw EntityNotFoundException('Account', options.id);
     }
     account.name = options.name;
-    return this.update(account);
+    return this._update(account);
   }
 
   /**

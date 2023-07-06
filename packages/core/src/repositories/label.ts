@@ -16,7 +16,7 @@ export class LabelRepository extends AbstractRepositoryAdapter<Label> {
       value: options.value,
       accent: options.accent,
     };
-    return this.save(label);
+    return this._save(label);
   }
 
   async update(options: UpdateLabelOptions): Promise<Label> {
@@ -26,7 +26,7 @@ export class LabelRepository extends AbstractRepositoryAdapter<Label> {
     }
     label.value = options.value || label.value;
     label.accent = options.accent || label.accent;
-    return this.update(label);
+    return this._update(label);
   }
 
   async validate(entity: Label): Promise<void> {
