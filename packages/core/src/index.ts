@@ -9,12 +9,12 @@ import {
   TransactionsManager,
 } from './services';
 
-export type ProtowalletCoreOptions = {
+export type ProtowalletOptions = {
   dbName: string;
 };
 
-export class ProtowalletCore {
-  private options: ProtowalletCoreOptions;
+export class Protowallet {
+  private options: ProtowalletOptions;
   private applicationFeed: ApplicationFeed;
   private repositoryProvider: RepositoryProvider;
 
@@ -26,7 +26,7 @@ export class ProtowalletCore {
   private transactionAggregatorService: TransactionAggregationsService | null = null;
   private transactionGroupingService: TransactionsGroupingService | null = null;
 
-  constructor(options: ProtowalletCoreOptions) {
+  constructor(options: ProtowalletOptions) {
     this.options = options;
 
     const db = new Loki(this.options.dbName);
