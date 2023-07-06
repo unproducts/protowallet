@@ -18,5 +18,5 @@ export type RecurringTransaction = {
   type: RecordType;
   category: number;
   amount: Amount;
-  labels: string[];
+  labels: number[];
 } & RecurringEntity & IdEntity & GeneralTimestamedEntity;
