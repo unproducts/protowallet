@@ -394,6 +394,11 @@
     "@tufjs/canonical-json" "1.0.0"
     minimatch "^9.0.0"
 
+"@types/breejs__later@^4.1.2":
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/@types/breejs__later/-/breejs__later-4.1.2.tgz#30a3f377e955609c9fa05d802a1095299eac389f"
+  integrity sha512-qTLhBWIdaFcBhYu/2eg2B4bjXXtGKzKfN+Hpmr3A2fyXJx4hx1nMcP84NpfYAjZ8ktKsXhu37/P41W3x/cP7jg==
+
 "@types/lokijs@^1.5.8":
   version "1.5.8"
   resolved "https://registry.yarnpkg.com/@types/lokijs/-/lokijs-1.5.8.tgz#0c365744f6e473ac6e9a6d8b174649b6ef85f47d"
