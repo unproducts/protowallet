@@ -1,11 +1,18 @@
-import { IdEntity, Transaction } from '@protowallet/types';
+import { IdEntity, StrictRange, Transaction } from '@protowallet/types';
 import { AbstractRepositoryAdapter } from './base';
 import { AccountRepository } from './account';
 import { EntityNotFoundException, EntityNotValidException, utils } from '@protowallet/common';
 
 export type CreateTransactionOptions = Omit<Transaction, 'id'>;
-
 export type UpdateTransactionOptions = Omit<Partial<Transaction> & IdEntity, 'isRecurringTransaction'>;
+export type FindTransactionsOptions = {
+  dateRange: StrictRange<Date>;
+  accounts?: number[];
+  categories?: number[];
+  labels?: number[];
+  recordTypes?: number[];
+  amountRange?: StrictRange<number>;
+};
 
 export class TransactionRepository extends AbstractRepositoryAdapter<Transaction> {
   protected accountsRepository: AccountRepository;
@@ -13,6 +20,12 @@ export class TransactionRepository extends AbstractRepositoryAdapter<Transaction
   constructor(feed: Collection<Transaction>, accountsRepository: AccountRepository) {
     super(feed);
     this.accountsRepository = accountsRepository;
+  }
+
+  async query(options: FindTransactionsOptions): Promise<Transaction[]> {
+    const query: Record<string, any> = this.prepareQueryFromOptions(options);
+    const transactions: Transaction[] = this.feed.find(query);
+    return transactions;
   }
 
   async create(options: CreateTransactionOptions): Promise<Transaction> {
@@ -53,5 +66,35 @@ export class TransactionRepository extends AbstractRepositoryAdapter<Transaction
     if (!account) {
       throw EntityNotFoundException('Account', entity.accountId);
     }
+  }
+
+  private prepareQueryFromOptions(options: FindTransactionsOptions) {
+    const query: Record<string, any> = {
+      $and: [
+        {
+          timestamp: {
+            $gte: options.dateRange.from,
+          },
+        },
+        {
+          timestamp: {
+            $lte: options.dateRange.to,
+          },
+        },
+      ],
+    };
+
+    if (options.accounts) {
+      query.accountId = {
+        $in: options.accounts,
+      };
+    }
+    if (options.categories) {
+      query.category = {
+        $in: options.categories,
+      };
+    }
+
+    return query;
   }
 }

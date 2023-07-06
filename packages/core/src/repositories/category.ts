@@ -8,7 +8,6 @@ export type CreateCategoryOptions = Omit<Category, 'id'>;
 // Updating logoId is disabled since parent cannot be edited and child cannot have logo.
 export type UpdateCategoryOptions = Partial<Omit<Category, 'parent' | 'logoId'>> & IdEntity;
 
-
 export class CategoryRepository extends AbstractRepositoryAdapter<Category> {
   constructor(feed: Collection<Category>) {
     super(feed);

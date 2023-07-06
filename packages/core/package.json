@@ -12,12 +12,13 @@
   },
   "dependencies": {
     "@breejs/later": "^4.1.0",
+    "@protowallet/common": "^1.0.0",
     "@protowallet/lookups": "^1.0.0",
     "@protowallet/types": "^1.0.0",
-    "@protowallet/common": "^1.0.0",
     "lokijs": "^1.5.12"
   },
   "devDependencies": {
+    "@types/breejs__later": "^4.1.2",
     "@types/lokijs": "^1.5.8"
   }
 }

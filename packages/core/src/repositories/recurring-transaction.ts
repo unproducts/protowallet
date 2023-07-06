@@ -1,4 +1,4 @@
-import { IdEntity, RecurringTransaction } from '@protowallet/types';
+import { IdEntity, RecurringTransaction, StrictRange } from '@protowallet/types';
 import { AbstractRepositoryAdapter } from './base';
 import { EntityNotFoundException, EntityNotValidException, utils } from '@protowallet/common';
 import { AccountRepository } from './account';
@@ -6,6 +6,13 @@ import { EndRecurrenceBy } from '@protowallet/lookups';
 
 export type CreateRecurringTransactionOptions = Omit<RecurringTransaction, 'id'>;
 export type UpdateRecurringTransactionOptions = Partial<RecurringTransaction> & IdEntity;
+export type FindRecurringTransactionsOptions = {
+  accounts?: number[];
+  categories?: number[];
+  labels?: number[];
+  recordTypes?: number[];
+  amountRange?: StrictRange<number>;
+};
 
 export class RecurringTransactionRepository extends AbstractRepositoryAdapter<RecurringTransaction> {
   protected accountsRepository: AccountRepository;
@@ -21,6 +28,12 @@ export class RecurringTransactionRepository extends AbstractRepositoryAdapter<Re
       id: utils.generateRandomId(),
     };
     return this._save(transaction);
+  }
+
+  async query(options: FindRecurringTransactionsOptions): Promise<RecurringTransaction[]> {
+    const query: Record<string, any> = this.prepareQueryFromOptions(options);
+    const RecurringTransactions: RecurringTransaction[] = this.feed.find(query);
+    return RecurringTransactions;
   }
 
   async update(options: UpdateRecurringTransactionOptions): Promise<RecurringTransaction> {
@@ -65,5 +78,22 @@ export class RecurringTransactionRepository extends AbstractRepositoryAdapter<Re
     if (!account) {
       throw EntityNotFoundException('Account', entity.accountId);
     }
+  }
+
+  private prepareQueryFromOptions(options: FindRecurringTransactionsOptions) {
+    const query: Record<string, any> = {};
+
+    if (options.accounts) {
+      query.accountId = {
+        $in: options.accounts,
+      };
+    }
+    if (options.categories) {
+      query.category = {
+        $in: options.categories,
+      };
+    }
+
+    return query;
   }
 }

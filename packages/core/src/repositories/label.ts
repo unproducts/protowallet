@@ -20,7 +20,7 @@ export class LabelRepository extends AbstractRepositoryAdapter<Label> {
   }
 
   async update(options: UpdateLabelOptions): Promise<Label> {
-    const label =  await this.get(options.id);
+    const label = await this.get(options.id);
     if (!label) {
       throw EntityNotFoundException('Label', options.id);
     }
