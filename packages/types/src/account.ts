@@ -3,7 +3,7 @@ import { GeneralTimestamedEntity, IdEntity } from './base';
 export type Account = {
   name: string;
   index: number;
-  accent: string;
+  accent: number;
   initialBalance: number;
 } & GeneralTimestamedEntity & IdEntity;
 
