@@ -19,6 +19,7 @@
     "@protowallet/common": "^1.0.0",
     "@protowallet/lookups": "^1.0.0",
     "@protowallet/types": "^1.0.0",
+    "@protowallet/static-data": "^1.0.0",
     "lokijs": "^1.5.12"
   },
   "devDependencies": {
