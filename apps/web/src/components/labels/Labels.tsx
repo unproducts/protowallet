@@ -1,27 +1,44 @@
-import React from 'react';
-import { Label } from '../../types';
+import React, { useEffect, useState } from 'react';
 import LabelCard from './LabelCard';
-import PageTitle from '../shared/PageTitle';
-
-const generateRandomColor = () => {
-  const randomColor = Math.floor(Math.random() * 16777215).toString(16);
-  return `#${randomColor}`;
-};
+import { getProto } from '../../integrations/proto';
+import { Label } from '@protowallet/types';
+import { CreateLabelOptions, LabelRepository, UpdateLabelOptions } from '@protowallet/core/dist/repositories';
+import { EntitiesEnum } from '@protowallet/core';
+import SinglePageHeader from '../shared/SinglePageHeader';
+import { NewLabelButton } from './NewUpdateLabelAction';
 
 const Labels = () => {
-  const labels: Label[] = [
-    { id: 'label1', value: 'Label 1', accent: generateRandomColor() },
-    { id: 'label2', value: 'Label 2', accent: generateRandomColor() },
-  ];
+  const proto = getProto();
+  const labelRepository = proto.getRepository(EntitiesEnum.Label) as LabelRepository;
+
+  const [labels, setLabels] = useState<Label[]>([]);
+
+  useEffect(() => {
+    labelRepository.getAll().then(setLabels);
+  }, []);
+
+  const createLabel = (options: CreateLabelOptions) => {
+    labelRepository.create(options).then((l) => setLabels([...labels, l]));
+  };
+  const deleteLabel = (label: Label) => {
+    labelRepository.delete(label.id).then(() => setLabels(labels.filter((l) => l.id !== label.id)));
+  };
+  const updateLabel = (options: UpdateLabelOptions) => {
+    labelRepository.update(options).then((upL) => setLabels(labels.map((l) => (l.id === upL.id ? upL : l))));
+  };
+
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8 w-full mx-auto">
       {/* Left: Title */}
-      <PageTitle title='Labels' resourceName='label' />
+      <SinglePageHeader
+        title="Labels"
+        cta={<NewLabelButton createLabelFn={createLabel} updateLabelFn={updateLabel} />}
+      />
       {/* Label cards */}
       <div className="grid grid-cols-12 gap-2">
         {labels.map((label) => (
           <div className="col-span-3 p-1">
-            <LabelCard label={label} />
+            <LabelCard label={label} updateLabelFn={updateLabel} deleteLabelFn={deleteLabel} />
           </div>
         ))}
       </div>

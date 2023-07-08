@@ -1,20 +1,31 @@
 import React, { useState } from 'react';
-import PalletPicker from '../shared/PalletPicker';
-import { FormProps, Label } from '../../types';
+import { CreateLabelOptions, UpdateLabelOptions } from '@protowallet/core/dist/repositories';
+import { Label } from '@protowallet/types';
+import { OkCancelAction } from '../../constants/enums';
+import { utils } from '@protowallet/common';
 
-export default function LabelForm({ resourceDetails: labelDetails, setResourceDetails: setLabelDetails, setOpenModal }: FormProps<Label>) {
-  const [name, setName] = useState<string>(labelDetails?.value || '');
-  const [accent, setAccent] = useState<string>(labelDetails?.accent || '');
+export type LabelFormProps = {
+  label?: Label;
+  createLabelFn?: (label: CreateLabelOptions) => void;
+  updateLabelFn?: (label: UpdateLabelOptions) => void;
+  actionCompleteFn?: (actionPerformed: OkCancelAction, label?: Label) => void;
+};
 
-  const createLabel = () => {
-    // post call
-    setOpenModal(false);
-  };
+function LabelForm(props: LabelFormProps) {
+  const { createLabelFn, updateLabelFn } = props;
+  const isUpdating = !!props.label && props.label.id !== 0;
 
-  const updateLabelDetails = () => {
-    // put call
-    setLabelDetails?.(prevState => ({ ...prevState, value: name, accent }));
-    setOpenModal(false);
+  const labelId = props.label?.id || 0;
+  const [name, setName] = useState<string>(props.label?.value || '');
+  const accent = props.label && props.label.accent || utils.generateRandomColor();
+
+  const saveLabel = () => {
+    if (isUpdating) {
+      updateLabelFn && updateLabelFn({ id: labelId, value: name, accent });
+    } else {
+      createLabelFn && createLabelFn({ value: name, accent });
+    }
+    props.actionCompleteFn && props.actionCompleteFn(OkCancelAction.Ok);
   };
 
   return (
@@ -33,30 +44,22 @@ export default function LabelForm({ resourceDetails: labelDetails, setResourceDe
             setName(value);
           }}
         />
-        <label className="block text-sm font-medium mb-1" htmlFor="name">
-          Accent <span className="text-rose-500">*</span>
-        </label>
-        /**
-        TODO: Create a component for custom color picker
-        */
-        {/* <PalletPicker setPalletNumber={setAccent} /> */}
         <div className="flex flex-wrap justify-end space-x-2">
-          <button
-            className="btn-sm border-slate-200 hover:border-slate-300 text-slate-600"
-            onClick={(e) => {
-              e.stopPropagation();
-              setOpenModal(false);
-            }}
-          >
-            Cancel
+          {props.actionCompleteFn && (
+            <button
+              className="btn-sm border-slate-200 hover:border-slate-300 text-slate-600"
+              onClick={() => props.actionCompleteFn && props.actionCompleteFn(OkCancelAction.Cancel)}
+            >
+              Cancel
+            </button>
+          )}
+          <button className="btn-sm bg-primary-500 hover:bg-primary-600 text-white" onClick={saveLabel}>
+            {isUpdating ? 'Update' : 'Create'}
           </button>
-          {
-            labelDetails ? <button className="btn-sm bg-primary-500 hover:bg-primary-600 text-white" onClick={() => updateLabelDetails()}>Edit</button> :
-              <button className="btn-sm bg-primary-500 hover:bg-primary-600 text-white" onClick={() => createLabel()}>Create</button>
-          }
-
         </div>
       </div>
     </div>
   );
 }
+
+export default LabelForm;

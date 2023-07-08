@@ -1,32 +1,37 @@
-import React, { useState } from 'react';
+import React from 'react';
 import LabelsIcon from '../../icons/LabelsIcon';
 import { Label } from '../../types';
 import EditIcon from '../../icons/EditIcon';
 import DeleteIcon from '../../icons/DeleteIcon';
-import ResourceModal from '../shared/ResourceModal';
+import NewUpdateLabelAction from './NewUpdateLabelAction';
 
 export type LabelCardProps = {
   label: Label;
+  updateLabelFn: (label: Label) => void;
+  deleteLabelFn: (label: Label) => void;
 };
 
-const LabelCard = ({ label }: LabelCardProps) => {
-  const [openLabelModal, setOpenLabelModal] = useState<boolean>(false);
-  const [labelDetails, setLabelDetails] = useState<Label>(label);
-
+const LabelCard = (props: LabelCardProps) => {
   return (
     <>
-      <ResourceModal openModal={openLabelModal} setOpenModal={setOpenLabelModal} resourceDetails={labelDetails} setResourceDetails={setLabelDetails} resourceName='label' />
-      <div className="flex justify-between border rounded-md p-4">
+      <div className="flex justify-between border rounded-md px-4 py-2">
         <span className="flex items-center font-medium">
-          {/* <LabelsIcon className="w-5 h-5 mr-1" /> */}
-          <div className="h-5 w-5 rounded mr-2" style={{ backgroundColor: labelDetails.accent }}></div>
-          {labelDetails.value}
+          <div className="h-5 w-5 rounded mr-2 font-bold" style={{ backgroundColor: props.label.accent }}></div>
+          {props.label.value}
         </span>
-        <span className='flex items-center justify-around'>
-          <button className="text-slate-400 hover:text-slate-500 border rounded-lg p-0.5 mr-1" onClick={() => setOpenLabelModal(true)}>
-            <EditIcon className="w-5 h-5" />
-          </button>
-          <button className="text-red-400 hover:text-red-500 border rounded-lg p-0.5">
+        <span className="flex items-center justify-around">
+          <NewUpdateLabelAction label={props.label} updateLabelFn={props.updateLabelFn}>
+            <span className="text-slate-400 hover:text-slate-500 rounded-lg p-1 mr-1">
+              <EditIcon className="w-5 h-5 border rounded-lg" />
+            </span>
+          </NewUpdateLabelAction>
+          <button
+            className="text-red-400 hover:text-red-500 border rounded-lg p-0.5"
+            onClick={(e) => {
+              e.preventDefault();
+              props.deleteLabelFn(props.label);
+            }}
+          >
             <DeleteIcon className="w-5 h-5" />
           </button>
         </span>
