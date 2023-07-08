@@ -1,62 +1,49 @@
-import React from 'react';
-import CategoryCard, { CategoryCardProps } from './CategoryCard';
+import React, { useEffect, useState } from 'react';
+import CategoryCard from './CategoryCard';
+import SinglePageHeader from '../shared/SinglePageHeader';
+import { EntitiesEnum } from '@protowallet/core';
+import { CategoryRepository, CreateCategoryOptions, UpdateCategoryOptions } from '@protowallet/core/dist/repositories';
+import { Category, DetailedCategory } from '@protowallet/types';
+import { useProto } from '../../hooks/use-proto';
 
 const Categories = () => {
-  const dummyCategory1: CategoryCardProps = {
-    category: {
-      id: 1,
-      title: 'Category 1',
-      parent: 0,
-    },
-    subcategories: [
-      {
-        id: 1,
-        title: 'Subcategory 1',
-        parent: 1,
-      },
-      {
-        id: 2,
-        title: 'Subcategory 2',
-        parent: 1,
-      },
-    ],
+  const proto = useProto();
+  const categoryRepository = proto.getRepository(EntitiesEnum.Category) as CategoryRepository;
+
+  const [categories, setCategories] = useState<DetailedCategory[]>([]);
+
+  const refreshCategories = () => {
+    categoryRepository.getAll_Detailed().then(setCategories);
   };
-  const dummyCategory2: CategoryCardProps = {
-    category: {
-      id: 2,
-      title: 'Category 2',
-      parent: 0,
-    },
-    subcategories: [
-      {
-        id: 3,
-        title: 'Subcategory 3',
-        parent: 2,
-      },
-      {
-        id: 4,
-        title: 'Subcategory 4',
-        parent: 2,
-      },
-    ],
+
+  useEffect(refreshCategories, []);
+
+  const createCategory = (options: CreateCategoryOptions) => {
+    console.log('createCategory', options);
+    categoryRepository.create(options).then((_) => {
+      refreshCategories();
+    });
+  };
+  const deleteCategory = (category: Category) => {
+    categoryRepository.delete(category.id).then(() => {
+      refreshCategories();
+    });
+  };
+  const updateCategcategory = (options: UpdateCategoryOptions) => {
+    categoryRepository.update(options).then((_) => {
+      refreshCategories();
+    });
   };
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8 w-full mx-auto">
-      {/* Page header */}
-      <div className="sm:flex sm:justify-between sm:items-center mb-5">
-        {/* Left: Title */}
-        <div className="mb-4 sm:mb-0">
-          <h1 className="text-2xl md:text-3xl text-slate-800 font-bold">Categories ✨</h1>
-        </div>
-        {/* Add card button */}
-        {/* <NewAccountModal /> */}
-      </div>
+      <SinglePageHeader title="Categories" />
 
       {/* Credit cards */}
       <div className="space-y-4">
         {/* Card 1 */}
-        <CategoryCard {...dummyCategory1} />
-        <CategoryCard {...dummyCategory2} />
+        {categories.map((category) => (
+          <CategoryCard key={category.id} category={category} updateCategoryFn={updateCategcategory} createCategoryFn={createCategory} deleteCategoryFn={deleteCategory} />
+        ))}
       </div>
     </div>
   );
