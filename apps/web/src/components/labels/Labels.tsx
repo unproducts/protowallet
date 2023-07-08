@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import LabelCard from './LabelCard';
-import { getProto } from '../../integrations/proto';
 import { Label } from '@protowallet/types';
 import { CreateLabelOptions, LabelRepository, UpdateLabelOptions } from '@protowallet/core/dist/repositories';
 import { EntitiesEnum } from '@protowallet/core';
 import SinglePageHeader from '../shared/SinglePageHeader';
 import { NewLabelButton } from './NewUpdateLabelAction';
+import { useProto } from '../../hooks/use-proto';
 
 const Labels = () => {
-  const proto = getProto();
+  const proto = useProto();
   const labelRepository = proto.getRepository(EntitiesEnum.Label) as LabelRepository;
 
   const [labels, setLabels] = useState<Label[]>([]);
@@ -32,12 +32,12 @@ const Labels = () => {
       {/* Left: Title */}
       <SinglePageHeader
         title="Labels"
-        cta={<NewLabelButton createLabelFn={createLabel} updateLabelFn={updateLabel} />}
+        cta={<NewLabelButton createLabelFn={createLabel} />}
       />
       {/* Label cards */}
       <div className="grid grid-cols-12 gap-2">
         {labels.map((label) => (
-          <div className="col-span-3 p-1">
+          <div className="col-span-3 p-1" key={label.id}>
             <LabelCard label={label} updateLabelFn={updateLabel} deleteLabelFn={deleteLabel} />
           </div>
         ))}

@@ -6,6 +6,7 @@ import LabelForm, { LabelFormProps } from './LabelForm';
 
 export type NewUpdateLabelActionProps = {
   children: ReactNode;
+  buttonClassName?: string;
 } & Omit<LabelFormProps, 'actionCompleteFn'>;
 
 export const NewLabelButton = (props: Omit<NewUpdateLabelActionProps, 'children'>) => {
@@ -32,6 +33,7 @@ const NewUpdateLabelAction = (props: NewUpdateLabelActionProps) => {
         <LabelForm {...props} actionCompleteFn={actionCompleteFn} />
       </ModalBasic>
       <button
+        className={props.buttonClassName}
         onClick={(e) => {
           e.preventDefault();
           setModelOpen(true);
