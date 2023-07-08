@@ -2,9 +2,13 @@
   "name": "@protowallet/common",
   "version": "1.0.0",
   "description": "Common erros / utilites / configs for Protowallet",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
+  "module": "./dist/index.js",
   "typings": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
   "license": "MIT",
   "private": false,
   "scripts": {

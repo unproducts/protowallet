@@ -2,13 +2,11 @@
   "name": "@protowallet/core",
   "version": "1.0.0",
   "description": "Core functionalities for protowallet.",
-  "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "typings": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": "./dist/index.js"
     }
   },
   "license": "MIT",
