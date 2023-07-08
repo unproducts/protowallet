@@ -4,6 +4,7 @@ let proto: Protowallet | null = null;
 
 export async function initProto(options: ProtowalletOptions) {
   proto = new Protowallet(options);
+  console.log("🚀 Protowallet Initialised");
 }
 
 export function getProto(): Protowallet {
