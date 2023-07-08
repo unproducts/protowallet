@@ -13,7 +13,7 @@ export interface Repository<T extends IdEntity> {
   
   delete(id: number): Promise<void>;
 
-  getUnderlyingFeed(): Promise<Collection<T>>;
+  getUnderlyingFeed(): Collection<T>;
   validate(entity: T): Promise<void>;
 }
 
@@ -60,7 +60,7 @@ export abstract class AbstractRepositoryAdapter<T extends IdEntity> implements R
     }
   }
 
-  async getUnderlyingFeed(): Promise<Collection<T>> {
+  getUnderlyingFeed(): Collection<T> {
     return this.feed;
   }
 

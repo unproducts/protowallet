@@ -33,7 +33,7 @@ export class AccountsService {
       accounts: accountIds,
     });
     const transactionsByAccount = await this.transactionsGroupingService.groupTransactions_Accountwise(transactions);
-    const balances = await this.transactionsAggregatorService.aggregateTransactionsGroupAmount(transactionsByAccount);
+    const balances = await this.transactionsAggregatorService.aggregateTransactionsGroupAmount(transactionsByAccount, a => a.initialBalance.value);
     return accounts.map((account) => ({
       ...account,
       balance: balances.get(account) || { value: 0, currency: Currency.INR, direction: RecordDirection.Right },
@@ -47,7 +47,7 @@ export class AccountsService {
       dateRange: accountLifespan,
       accounts: [account.id],
     });
-    const balance = await this.transactionsAggregatorService.aggregateTransactionsAmount(transactions);
+    const balance = await this.transactionsAggregatorService.aggregateTransactionsAmount(transactions, account.initialBalance.value);
     return {
       ...account,
       balance,

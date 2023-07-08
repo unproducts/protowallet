@@ -45,8 +45,8 @@ export class TransactionsManager {
 
 export class TransactionAggregationsService {
   // Aggregations
-  async aggregateTransactionsAmount(transactions: Transaction[]): Promise<Amount> {
-    let currentBalance = 0;
+  async aggregateTransactionsAmount(transactions: Transaction[], initialBalance: number = 0): Promise<Amount> {
+    let currentBalance = initialBalance;
     for (let index = 0; index < transactions.length; index++) {
       const transaction = transactions[index];
       switch (transaction.amount.direction) {
@@ -73,11 +73,12 @@ export class TransactionAggregationsService {
     }
   }
 
-  async aggregateTransactionsGroupAmount<K>(transactionsMap: Map<K, Transaction[]>): Promise<Map<K, Amount>> {
+  async aggregateTransactionsGroupAmount<K>(transactionsMap: Map<K, Transaction[]>, initialAmountFn?: (t: K) => number): Promise<Map<K, Amount>> {
     const data: Map<K, Amount> = new Map();
     for (let key of transactionsMap.keys()) {
       const transactions = transactionsMap.get(key) as Transaction[];
-      const aggregatedAmount = await this.aggregateTransactionsAmount(transactions);
+      const initialAmount = initialAmountFn ? initialAmountFn(key) : 0;
+      const aggregatedAmount = await this.aggregateTransactionsAmount(transactions, initialAmount);
       data.set(key, aggregatedAmount);
     }
     return data;

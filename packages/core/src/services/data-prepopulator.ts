@@ -1,7 +1,8 @@
+import { Currency } from '@protowallet/lookups';
 import { Entities } from '../entities-lookup';
-import { CategoryRepository } from '../repositories';
+import { AccountRepository, CategoryRepository } from '../repositories';
 import { RepositoryProvider } from '../repository-provider';
-import { generateDefaultCategories } from '@protowallet/static-data';
+import { generateDefaultCategories, generatePrefilledAccounts } from '@protowallet/static-data';
 
 export class DataPrepopulatorService {
   private repositoryProvider: RepositoryProvider;
@@ -11,7 +12,10 @@ export class DataPrepopulatorService {
   }
 
   async prepopulate() {
-    await this.prepopulateCategories();
+    Promise.all([
+      this.prepopulateCategories(),
+      this.prepopulateAccounts(),
+    ]);
   }
 
   async prepopulateCategories() {
@@ -21,5 +25,14 @@ export class DataPrepopulatorService {
     const categoryFeed = categoryRepository.getUnderlyingFeed();
 
     categoryFeed.insert(defaultCategories);
+  }
+
+  async prepopulateAccounts() {
+    const accountRepository = this.repositoryProvider(Entities.Account) as AccountRepository;
+    const defaultAccounts = generatePrefilledAccounts(Currency.INR);
+    
+    const accountFeed = accountRepository.getUnderlyingFeed();
+
+    accountFeed.insert(defaultAccounts);
   }
 }

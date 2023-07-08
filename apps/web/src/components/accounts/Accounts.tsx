@@ -1,31 +1,56 @@
 import React, { useEffect, useState } from 'react';
-import { CalculatedAccount } from '../../types';
-import PageTitle from '../shared/PageTitle';
 import AccountCard from './AccountCard';
+import SinglePageHeader from '../shared/SinglePageHeader';
+import { CalculatedAccount } from '@protowallet/types';
+import { useProto } from '../../hooks/use-proto';
+import { AccountRepository, CreateAccountOptions, UpdateAccountOptions } from '@protowallet/core/dist/repositories';
+import { EntitiesEnum } from '@protowallet/core';
+import { Currency } from '@protowallet/lookups';
+import { NewAccountButton } from './NewUpdateAccountAction';
 
 function Accounts() {
-  const createdDate1 = new Date();
-  createdDate1.setDate(createdDate1.getDate() - 1);
-  const createdDate2 = new Date();
-  createdDate2.setDate(createdDate2.getDate() - 12);
-  const [accountsData, setAccountsData] = useState<CalculatedAccount[]>([
-    { id: 'aklf', name: 'Bank Of India', balance: 100000, createdAt: createdDate1, index: 0, accent: 'blue', initialBalance: 100000 },
-    { id: 'akldf', name: 'Cash', balance: 10002, createdAt: createdDate2, index: 0, accent: 'blue', initialBalance: 10000 },
-  ]);
+  const proto = useProto();
+  const accountsRepository = proto.getRepository(EntitiesEnum.Account) as AccountRepository;
+  const accountsService = proto.getAccountsService();
+
+  const [accounts, setAccounts] = useState<CalculatedAccount[]>([]);
+
+  const createAccount = (options: CreateAccountOptions) => {
+    accountsRepository.create(options).then((account) => {
+      accountsService.getComputedAccount(account.id).then((calculatedAccount) => {
+        setAccounts([...accounts, calculatedAccount]);
+      });
+    });
+  };
+
+  const updateAccount = (options: UpdateAccountOptions) => {
+    accountsRepository.update(options).then((account) => {
+      accountsService.getComputedAccount(account.id).then((calculatedAccount) => {
+        setAccounts([...accounts.filter((a) => a.id !== account.id), calculatedAccount]);
+      });
+    });
+  };
+
+  const deleteAccount = (id: number) => {
+    accountsRepository.delete(id).then(() => {
+      setAccounts([...accounts.filter((a) => a.id !== id)]);
+    });
+  };
 
   useEffect(() => {
-    // fetching all the account details
+    accountsService.getAllComputedAccounts().then((accounts) => {
+      setAccounts(accounts);
+    });
   }, []);
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8 w-full mx-auto">
-      {/* Page header */}
-      <PageTitle title='Accounts' resourceName='account' />
+      <SinglePageHeader title="Accounts" cta={<NewAccountButton createAccountFn={createAccount}/>}/>
       <div className="grid grid-cols-12 gap-2">
-        {/* Card 1 */}
-        {accountsData.map((account) => (
-          <div className='col-span-3 p-1'>
-            <AccountCard account={account} />
+        {accounts.map((account) => (
+          <div className="col-span-3 p-1" key={account.id}>
+            {/* TODO: Get currency from prefs. */}
+            <AccountCard account={account} currency={Currency.INR} updateAccountFn={updateAccount} deleteAccountFn={deleteAccount} />
           </div>
         ))}
       </div>

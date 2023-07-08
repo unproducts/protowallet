@@ -1,5 +1,4 @@
-import generateDefaultCategories from "./static-catagories";
+import generateDefaultCategories from './static-catagories';
+import generatePrefilledAccounts from './accounts';
 
-export {
-    generateDefaultCategories
-}
+export { generateDefaultCategories, generatePrefilledAccounts };

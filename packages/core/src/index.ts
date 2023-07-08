@@ -10,6 +10,7 @@ import {
   TransactionsGroupingService,
   TransactionsManager,
 } from './services';
+import { DataPrepopulatorService } from './services/data-prepopulator';
 
 export type ProtowalletOptions = {
   dbName: string;
@@ -21,6 +22,8 @@ export class Protowallet {
   private options: ProtowalletOptions;
   private applicationFeed: ApplicationFeed;
   private repositoryProvider: RepositoryProvider;
+
+  private dataPrepopulatorService: DataPrepopulatorService | null = null;
 
   private accountsService: AccountsService | null = null;
 
@@ -37,10 +40,19 @@ export class Protowallet {
     this.applicationFeed = initializeFeed(db);
 
     this.repositoryProvider = makeProvider(this.applicationFeed);
+
+    this.getDataPrepopulatorService().prepopulate();
   }
 
   getRepository(entity: Entities) {
     return this.repositoryProvider(entity);
+  }
+
+  getDataPrepopulatorService() {
+    if (this.dataPrepopulatorService === null) {
+      this.dataPrepopulatorService = new DataPrepopulatorService(this.repositoryProvider);
+    }
+    return this.dataPrepopulatorService;
   }
 
   getAccountsService() {

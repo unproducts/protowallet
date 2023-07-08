@@ -7,9 +7,8 @@ export type CreateAccountOptions = Omit<Partial<Account>, 'id' | 'createdAt'> & 
   name: string;
 };
 
-export type UpdateAccountOptions = {
+export type UpdateAccountOptions = Omit<Partial<Account>, 'createdAt'> & {
   id: number;
-  name: string;
 };
 
 export class AccountRepository extends AbstractRepositoryAdapter<Account> {
@@ -36,7 +35,9 @@ export class AccountRepository extends AbstractRepositoryAdapter<Account> {
     if (!account) {
       throw EntityNotFoundException('Account', options.id);
     }
-    account.name = options.name;
+    account.name = options.name || account.name;
+    account.accent = options.accent || account.accent;
+
     return this._update(account);
   }
 

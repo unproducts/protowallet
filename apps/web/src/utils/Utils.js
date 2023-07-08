@@ -53,21 +53,10 @@ export function formatDate(date) {
 
   return formattedString;
 }
-
-export const formatValue = (value) =>
-  Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumSignificantDigits: 3,
-    notation: 'compact',
-  }).format(value);
-
 export const formatAmount = (value, currencySymbol) =>
   Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: currencySymbol,
-    maximumSignificantDigits: 2,
-    notation: 'standard',
   }).format(value);
 
 export const formatThousands = (value) =>

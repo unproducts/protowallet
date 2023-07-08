@@ -6,7 +6,7 @@ import './ChartjsConfig';
 
 import GeneralLayout from './components/GeneralLayout';
 // import Budgets from './components/budgets/budgets';
-// import Accounts from './components/accounts/Accounts';
+import Accounts from './components/accounts/Accounts';
 // import Transactions from './components/transactions/Transactions';
 // import RecurringTransactions from './components/recurring transactions/recurringTransactions';
 import Labels from './components/labels/Labels';
@@ -18,7 +18,7 @@ function App() {
   const location = useLocation();
 
   const [proto, setProto] = useState<Protowallet | null>(null);
-  
+
   const createProto = (options: ProtowalletOptions): void => {
     setProto(new Protowallet(options));
   };
@@ -37,17 +37,21 @@ function App() {
     <>
       {!proto && (
         <div>
-          <button onClick={(e) => { e.preventDefault(); createProto({ dbName: 'test.db' })}}>Create Proto</button>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              createProto({ dbName: 'test.db' });
+            }}
+          >
+            Create Proto
+          </button>
         </div>
       )}
       {proto && (
         <ProtoContext.Provider value={proto}>
           <GeneralLayout>
             <Routes>
-              {/* <Route path="/budgets" element={<Budgets />} />
-          <Route path="/accounts" element={<Accounts />} />
-          <Route path="/transactions" element={<Transactions />} />
-          <Route path="/recurringTransactions" element={<RecurringTransactions />} /> */}
+              <Route path="/accounts" element={<Accounts />} />
               <Route path="/labels" element={<Labels />} />
               <Route path="/categories" element={<Categories />} />
             </Routes>
