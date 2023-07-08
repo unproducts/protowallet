@@ -1,7 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-
-import { initProto } from './integrations/proto';
 
 import './css/style.css';
 import './ChartjsConfig';
@@ -12,15 +10,20 @@ import GeneralLayout from './components/GeneralLayout';
 // import Transactions from './components/transactions/Transactions';
 // import RecurringTransactions from './components/recurring transactions/recurringTransactions';
 import Labels from './components/labels/Labels';
-// import Categories from './components/categories/Categories';
+import Categories from './components/categories/Categories';
+import { Protowallet, ProtowalletOptions } from '@protowallet/core';
+import { ProtoContext } from './hooks/use-proto';
 
 function App() {
   const location = useLocation();
-  initProto({
-    dbName: 'test.db',
-  });
+
+  const [proto, setProto] = useState<Protowallet | null>(null);
+  
+  const createProto = (options: ProtowalletOptions): void => {
+    setProto(new Protowallet(options));
+  };
+
   useEffect(() => {
-    console.log('location.pathname', location.pathname);
     if (document) {
       // @ts-ignore
       document.querySelector('html').style.scrollBehavior = 'auto';
@@ -32,16 +35,25 @@ function App() {
 
   return (
     <>
-      <GeneralLayout>
-        <Routes>
-          {/* <Route path="/budgets" element={<Budgets />} />
+      {!proto && (
+        <div>
+          <button onClick={(e) => { e.preventDefault(); createProto({ dbName: 'test.db' })}}>Create Proto</button>
+        </div>
+      )}
+      {proto && (
+        <ProtoContext.Provider value={proto}>
+          <GeneralLayout>
+            <Routes>
+              {/* <Route path="/budgets" element={<Budgets />} />
           <Route path="/accounts" element={<Accounts />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/recurringTransactions" element={<RecurringTransactions />} /> */}
-          <Route path="/labels" element={<Labels />} />
-          {/* <Route path="/categories" element={<Categories />} /> */}
-        </Routes>
-      </GeneralLayout>
+              <Route path="/labels" element={<Labels />} />
+              <Route path="/categories" element={<Categories />} />
+            </Routes>
+          </GeneralLayout>
+        </ProtoContext.Provider>
+      )}
     </>
   );
 }
