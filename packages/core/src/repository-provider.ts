@@ -9,7 +9,7 @@ export type RepositoryProviderMaker = (applicationFeed: ApplicationFeed) => Repo
 export const makeProvider: RepositoryProviderMaker = (applicationFeed: ApplicationFeed): RepositoryProvider => {
   const repositoryCache: Map<Entities, Repository<any>> = new Map();
   const get = (entity: Entities) => {
-    if (repositoryCache.get(entity) === null) {
+    if (!repositoryCache.get(entity)) {
       switch (entity) {
         case Entities.Account:
           repositoryCache.set(entity, new AccountRepository(applicationFeed.accounts));

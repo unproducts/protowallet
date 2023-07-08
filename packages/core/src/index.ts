@@ -1,3 +1,5 @@
+import loki from 'lokijs';
+
 import { Entities } from './entities-lookup';
 import { ApplicationFeed, initializeFeed } from './feeds';
 import { RepositoryProvider, makeProvider } from './repository-provider';
@@ -12,6 +14,8 @@ import {
 export type ProtowalletOptions = {
   dbName: string;
 };
+
+export { Entities as EntitiesEnum } from './entities-lookup';
 
 export class Protowallet {
   private options: ProtowalletOptions;
@@ -29,7 +33,7 @@ export class Protowallet {
   constructor(options: ProtowalletOptions) {
     this.options = options;
 
-    const db = new Loki(this.options.dbName);
+    const db = new loki(this.options.dbName);
     this.applicationFeed = initializeFeed(db);
 
     this.repositoryProvider = makeProvider(this.applicationFeed);
