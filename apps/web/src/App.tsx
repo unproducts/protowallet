@@ -13,6 +13,7 @@ import Labels from './components/labels/Labels';
 import Categories from './components/categories/Categories';
 import { Protowallet, ProtowalletOptions } from '@protowallet/core';
 import { ProtoContext } from './hooks/use-proto';
+import SingleMessageComponent from './components/general/SingleMessageComponent';
 
 function App() {
   const location = useLocation();
@@ -33,6 +34,8 @@ function App() {
     }
   }, [location.pathname]); // triggered on route change
 
+  const ComingSoonPage = <SingleMessageComponent title='🚧' description='Coming Soon'/>;
+
   return (
     <>
       {!proto && (
@@ -51,9 +54,14 @@ function App() {
         <ProtoContext.Provider value={proto}>
           <GeneralLayout>
             <Routes>
+              <Route path="/home" element={ComingSoonPage} />
+              <Route path='/analytics' element={ComingSoonPage} />
+              <Route path='/budgets' element={ComingSoonPage} />
               <Route path="/accounts" element={<Accounts />} />
               <Route path="/labels" element={<Labels />} />
               <Route path="/categories" element={<Categories />} />
+              <Route path="/triggers" element={ComingSoonPage} />
+              <Route path="/settings" element={ComingSoonPage} />
             </Routes>
           </GeneralLayout>
         </ProtoContext.Provider>
