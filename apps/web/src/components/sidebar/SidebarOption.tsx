@@ -38,14 +38,14 @@ const SidebarOption = (props: SidebarOptionProps) => {
   // @vite-ignore
   const SidebarIcon: React.FC<IconProps> = IconsRecord[props.icon];
 
-  const primary500 = '#006EF4';
+  const primary500 = '#1a1a1a';
   const generalSlate = '#94a3b8';
   return (
     <li className="mr-0.5 md:mr-0 md:mb-0.5">
       <NavLink
         end
         to={props.pathName}
-        className={`flex items-center px-2.5 py-2 rounded whitespace-nowrap ${pathname.includes(props.pathName) && 'bg-primary-100'}`}
+        className={`flex items-center px-2.5 py-2 rounded whitespace-nowrap ${pathname.includes(props.pathName) && 'bg-primary-100 border border-primary-500'}`}
       >
         {SidebarIcon && (
           <SidebarIcon

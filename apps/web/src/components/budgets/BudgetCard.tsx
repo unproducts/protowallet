@@ -10,7 +10,7 @@ export type BudgetCardProps = {
 
 const BudgetCard = (props: BudgetCardProps) => {
   const budget = props.budget;
-  const primary500 = '#006EF4';
+  const primary500 = '#1a1a1a';
   const progress = Math.round((budget.spent / budget.amount) * 100);
   return (
     <label className="cursor-pointer w-full">

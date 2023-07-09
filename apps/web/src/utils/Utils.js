@@ -57,6 +57,7 @@ export const formatAmount = (value, currencySymbol) =>
   Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: currencySymbol,
+    notation: 'standard',
   }).format(value);
 
 export const formatThousands = (value) =>
