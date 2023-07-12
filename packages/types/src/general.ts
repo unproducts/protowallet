@@ -11,4 +11,6 @@ export type StrictRange<T> = {
   to: T;
 };
 
+export type ApplicationMode = 'desktop' | 'docker' | 'web';
+
 export type GeneralRange<T> = Partial<StrictRange<T>>;
