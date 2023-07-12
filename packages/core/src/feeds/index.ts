@@ -51,3 +51,15 @@ export const initializeFeed = (db: loki): ApplicationFeed => {
     recurringBudgets: recurringBudgetCollection,
   };
 };
+
+export const getFeed = (db: loki): ApplicationFeed => {
+  return {
+    accounts: db.getCollection<Account>('accounts')!,
+    transactions: db.getCollection<Transaction>('transactions')!,
+    labels: db.getCollection<Label>('labels')!,
+    recurringTransactions: db.getCollection<RecurringTransaction>('recurringTransactions')!,
+    categories: db.getCollection<Category>('categories')!,
+    budgets: db.getCollection<Budget>('budgets')!,
+    recurringBudgets: db.getCollection<RecurringBudget>('recurringBudgets')!,
+  };
+};

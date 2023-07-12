@@ -14,14 +14,19 @@ import Categories from './components/categories/Categories';
 import { Protowallet, ProtowalletOptions } from '@protowallet/core';
 import { ProtoContext } from './hooks/use-proto';
 import SingleMessageComponent from './components/general/SingleMessageComponent';
+import { ApplicationMode } from '@protowallet/types';
 
 function App() {
   const location = useLocation();
 
   const [proto, setProto] = useState<Protowallet | null>(null);
 
-  const createProto = (options: ProtowalletOptions): void => {
-    setProto(new Protowallet(options));
+  const createProto = async (): Promise<void> => {
+    const protoMode = process.env.REACT_APP_PROTO_MODE;
+    Protowallet.create({
+      mode: protoMode as ApplicationMode,
+      dbName: 'protowallet',
+    }).then(setProto);
   };
 
   useEffect(() => {
@@ -43,7 +48,7 @@ function App() {
           <button
             onClick={(e) => {
               e.preventDefault();
-              createProto({ dbName: 'test.db' });
+              createProto();
             }}
           >
             Create Proto
