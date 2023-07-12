@@ -1,13 +1,14 @@
 import express, { Express } from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { PROTO_APP_BUILD_PATH, PROTO_APP_PASS_PHRASE } from './constants';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app: Express = express();
 
-const PROTO_APP_BUILD_PATH = path.join(__dirname, '../../web/dist');
+const passPhrase = PROTO_APP_PASS_PHRASE;
 
 app.use(express.static(PROTO_APP_BUILD_PATH));
 
