@@ -48,7 +48,7 @@ export class CategoryRepository extends AbstractRepositoryAdapter<Category> {
   }
 
   async getAllWithParent(parent: number): Promise<Category[]> {
-    return this.feed.find({ parent: { $eq: parent } });
+    return this.feed.find({ parent: { $eq: parent } }).map(this.entityLoadHook);
   }
 
   async update(options: UpdateCategoryOptions): Promise<Category> {

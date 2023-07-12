@@ -1,11 +1,11 @@
 import { Collection } from 'lokijs';
 
-import { IdEntity } from '@protowallet/types';
+import { GeneralTimestamedEntity, IdEntity } from '@protowallet/types';
 import { EntityCreationException, EntityNotFoundException, EntityUpdateException } from '@protowallet/common';
 
 export type UpdateDTO<T extends IdEntity> = Omit<Partial<T>, 'id'>;
 
-export interface Repository<T extends IdEntity> {
+export interface Repository<T extends IdEntity & GeneralTimestamedEntity> {
   get(id: number): Promise<T | null>;
   getAll(): Promise<T[]>;
   count(): Promise<number>;
@@ -17,7 +17,7 @@ export interface Repository<T extends IdEntity> {
   validate(entity: T): Promise<void>;
 }
 
-export abstract class AbstractRepositoryAdapter<T extends IdEntity> implements Repository<T> {
+export abstract class AbstractRepositoryAdapter<T extends IdEntity & GeneralTimestamedEntity> implements Repository<T> {
   protected feed: Collection<T>;
 
   constructor(feed: Collection<T>) {
@@ -25,11 +25,11 @@ export abstract class AbstractRepositoryAdapter<T extends IdEntity> implements R
   }
 
   async get(id: number): Promise<T | null> {
-    return this.feed.findOne({
+    return this.entityLoadHook(this.feed.findOne({
       id: {
         $eq: id,
       },
-    });
+    }) as T);
   }
 
   async getOrThrow(id: number): Promise<T> {
@@ -41,7 +41,7 @@ export abstract class AbstractRepositoryAdapter<T extends IdEntity> implements R
   }
 
   async getAll(): Promise<T[]> {
-    return this.feed.find();
+    return this.feed.find().map(this.entityLoadHook);
   }
 
   async getAllRecord(): Promise<Record<number, T>> {
@@ -89,6 +89,18 @@ export abstract class AbstractRepositoryAdapter<T extends IdEntity> implements R
       entitiesRecord[entity.id] = entity;
     }
     return entitiesRecord;
+  }
+
+  protected entityLoadHook(entity: T): T {
+    // This is done because serialization/deserialization of LokiJS doesn't work well with Date objects
+    // Any Date object entity has to be converted to a Date object like this.
+    if (!entity) {
+      return entity;
+    }
+    return {
+      ...entity,
+      createdAt: new Date(entity.createdAt),
+    };
   }
 
   abstract validate(entity: T): Promise<void>;

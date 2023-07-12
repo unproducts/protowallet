@@ -1,5 +1,5 @@
 import { Amount, StrictRange } from './general';
-import { IdEntity, RecurringEntity } from './base';
+import { GeneralTimestamedEntity, IdEntity, RecurringEntity } from './base';
 
 export type Budget = {
   title: string;
@@ -8,7 +8,7 @@ export type Budget = {
   amount: Amount;
   notes?: string;
   isRecurring: boolean;
-} & StrictRange<Date> & IdEntity;
+} & StrictRange<Date> & IdEntity & GeneralTimestamedEntity;
 
 export type ComputedBudget = Budget & {
   spent: number;

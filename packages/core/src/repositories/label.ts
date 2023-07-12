@@ -15,6 +15,7 @@ export class LabelRepository extends AbstractRepositoryAdapter<Label> {
       id: utils.generateRandomId(),
       value: options.value,
       accent: options.accent,
+      createdAt: new Date(),
     };
     return this._save(label);
   }
