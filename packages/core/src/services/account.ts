@@ -26,6 +26,7 @@ export class AccountsService {
 
   async getAllComputedAccounts(): Promise<CalculatedAccount[]> {
     const accounts = await this.accountRepository.getAll();
+    const allAccountsRecord = await this.accountRepository.getAllRecord();
     const accountsLifespan = this.getAccountLifespan();
     const accountIds = accounts.map((account) => account.id);
     const transactions = await this.transactionsManager.query({
@@ -33,10 +34,10 @@ export class AccountsService {
       accounts: accountIds,
     });
     const transactionsByAccount = await this.transactionsGroupingService.groupTransactions_Accountwise(transactions);
-    const balances = await this.transactionsAggregatorService.aggregateTransactionsGroupAmount(transactionsByAccount, a => a.initialBalance.value);
+    const balances = await this.transactionsAggregatorService.aggregateTransactionsGroupAmount(transactionsByAccount, a => allAccountsRecord[a]?.initialBalance.value);
     return accounts.map((account) => ({
       ...account,
-      balance: balances.get(account) || { value: 0, currency: Currency.INR, direction: RecordDirection.Right },
+      balance: balances.get(account.id) || { value: 0, currency: Currency.INR, direction: RecordDirection.Right },
     }));
   }
 

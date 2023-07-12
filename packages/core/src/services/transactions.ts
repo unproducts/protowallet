@@ -1,4 +1,4 @@
-import { Account, Amount, Category, IdEntity, Label, RecurringTransaction, Transaction } from '@protowallet/types';
+import { Account, Amount, Category, GeneralTimestamedEntity, IdEntity, Label, RecurringTransaction, Transaction } from '@protowallet/types';
 import { Entities } from '../entities-lookup';
 import { AccountRepository, CategoryRepository, FindTransactionsOptions, LabelRepository, RecurringTransactionRepository, Repository, TransactionRepository } from '../repositories';
 import { RepositoryProvider } from '../repository-provider';
@@ -73,8 +73,8 @@ export class TransactionAggregationsService {
     }
   }
 
-  async aggregateTransactionsGroupAmount<K>(transactionsMap: Map<K, Transaction[]>, initialAmountFn?: (t: K) => number): Promise<Map<K, Amount>> {
-    const data: Map<K, Amount> = new Map();
+  async aggregateTransactionsGroupAmount(transactionsMap: Map<number, Transaction[]>, initialAmountFn?: (t: number) => number): Promise<Map<number, Amount>> {
+    const data: Map<number, Amount> = new Map();
     for (let key of transactionsMap.keys()) {
       const transactions = transactionsMap.get(key) as Transaction[];
       const initialAmount = initialAmountFn ? initialAmountFn(key) : 0;
@@ -97,29 +97,37 @@ export class TransactionsGroupingService {
   }
 
   // Groupings
-  async groupTransactions_Categorywise(transactions: Transaction[]): Promise<Map<Category, Transaction[]>> {
+  async groupTransactions_Categorywise(transactions: Transaction[]): Promise<Map<number, Transaction[]>> {
     return this._groupTransactions<Category>(transactions, this.categoryRepository);
   }
 
-  async groupTransactions_Labelwise(transactions: Transaction[]): Promise<Map<Label, Transaction[]>> {
+  async groupTransactions_Labelwise(transactions: Transaction[]): Promise<Map<number, Transaction[]>> {
     return this._groupTransactions<Label>(transactions, this.labelRepository);
   }
 
-  async groupTransactions_Accountwise(transactions: Transaction[]): Promise<Map<Account, Transaction[]>> {
+  async groupTransactions_Accountwise(transactions: Transaction[]): Promise<Map<number, Transaction[]>> {
     return this._groupTransactions<Account>(transactions, this.accountRepository);
   }
 
-  protected async _groupTransactions<T extends IdEntity>(transactions: Transaction[], repository: Repository<T>): Promise<Map<T, Transaction[]>> {
-    const grouping: Map<T, Transaction[]> = new Map();
+  protected async _groupTransactions<T extends IdEntity & GeneralTimestamedEntity>(transactions: Transaction[], repository: Repository<T>): Promise<Map<number, Transaction[]>> {
+    const grouping: Map<number, Transaction[]> = new Map();
     const data: Record<number, T> = await repository.getAllRecord();
 
     for (let index = 0; index < transactions.length; index++) {
       const transaction = transactions[index];
       const entity = data[transaction.id];
-      const exisitingTransactions = grouping.get(entity) || [];
+      const exisitingTransactions = grouping.get(entity.id) || [];
       exisitingTransactions.push(transaction);
-      grouping.set(entity, exisitingTransactions);
+      grouping.set(entity.id, exisitingTransactions);
     }
+
+    for (let key of Object.keys(data)) {
+      const entity = data[parseInt(key)];
+      if (!grouping.has(entity.id)) {
+        grouping.set(entity.id, []);
+      }
+    }
+
     return grouping;
   }
 }
