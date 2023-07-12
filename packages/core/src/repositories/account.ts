@@ -51,8 +51,8 @@ export class AccountRepository extends AbstractRepositoryAdapter<Account> {
   async validate(account: Account): Promise<void> {
     const case1 = !!(account.id && account.id > 0);
     const case2 = !!(account.name && account.name.length > 0);
-    const case3 = !!(account.index && account.index >= 0);
-    const case4 = !!(account.initialBalance);
+    const case3 = !!(account.index >= 0);
+    const case4 = !!(account.initialBalance && account.initialBalance.value >= 0);
     const case5 = !!(account.accent && account.accent > 0 && account.accent <= config.TOTAL_ACCENTS);
     const isValid = case1 && case2 && case3 && case4 && case5;
     if (!isValid) {

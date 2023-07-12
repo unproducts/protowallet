@@ -26,7 +26,9 @@ function Accounts() {
   const updateAccount = (options: UpdateAccountOptions) => {
     accountsRepository.update(options).then((account) => {
       accountsService.getComputedAccount(account.id).then((calculatedAccount) => {
-        setAccounts([...accounts.filter((a) => a.id !== account.id), calculatedAccount]);
+        const newAccountList = [...accounts.filter((a) => a.id !== account.id), calculatedAccount];
+        newAccountList.sort((a, b) => a.index - b.index);
+        setAccounts(newAccountList);
       });
     });
   };
