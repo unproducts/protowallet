@@ -2,7 +2,7 @@
   "name": "@protowallet/web",
   "version": "0.1.0",
   "scripts": {
-    "dev": "vite",
+    "dev": "REACT_APP_PROTO_MODE=web vite",
     "build": "vite build",
     "preview": "vite preview",
     "preview:tail": "tailwind-config-viewer -p 3040 -c ./src/css/tailwind.config.js"
