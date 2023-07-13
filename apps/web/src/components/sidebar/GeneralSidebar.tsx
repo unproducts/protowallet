@@ -17,7 +17,7 @@ function GeneralSidebar() {
           <SidebarOption pathName="/labels" icon="LabelsIcon" label="Labels" />
           <SidebarOption pathName="/categories" icon="CategoriesIcon" label="Categories" />
           <SidebarOption pathName="/triggers" icon="TriggersIcon" label="Triggers" />
-          <SidebarOption pathName="/recurringTransactions" icon="RecurringTransactionIcon" label="Recurring Transaction" />
+          <SidebarOption pathName="/recurring-transactions" icon="RecurringTransactionIcon" label="Recurring Transactions" />
           <hr className="my-4" />
           <SidebarOption pathName="/settings" icon="SettingsIcon" label="Settings" />
         </ul>

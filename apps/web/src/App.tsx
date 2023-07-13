@@ -8,10 +8,10 @@ import GeneralLayout from './components/GeneralLayout';
 // import Budgets from './components/budgets/budgets';
 import Accounts from './components/accounts/Accounts';
 // import Transactions from './components/transactions/Transactions';
-// import RecurringTransactions from './components/recurring transactions/recurringTransactions';
+import RecurringTransactions from './components/recurring-transactions/RecurringTransactions';
 import Labels from './components/labels/Labels';
 import Categories from './components/categories/Categories';
-import { Protowallet, ProtowalletOptions } from '@protowallet/core';
+import { Protowallet } from '@protowallet/core';
 import { ProtoContext } from './hooks/use-proto';
 import SingleMessageComponent from './components/general/SingleMessageComponent';
 import { ApplicationMode } from '@protowallet/types';
@@ -64,6 +64,8 @@ function App() {
               <Route path="/accounts" element={<Accounts />} />
               <Route path="/labels" element={<Labels />} />
               <Route path="/categories" element={<Categories />} />
+              <Route path="/recurring-transactions" element={<RecurringTransactions />} />
+              <Route path="/transactions" element={ComingSoonPage} />
               <Route path="/triggers" element={ComingSoonPage} />
               <Route path="/settings" element={ComingSoonPage} />
             </Routes>
