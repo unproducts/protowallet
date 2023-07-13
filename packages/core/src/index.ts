@@ -18,6 +18,7 @@ export type ProtowalletOptions = {
   dbName: string;
   protoServerUrl?: string;
   mode: ApplicationMode;
+  dbAutoSaveCB?: () => void;
 };
 
 export { Entities as EntitiesEnum } from './entities-lookup';
@@ -117,7 +118,7 @@ export class Protowallet {
     const { dbName, mode } = options;
     const dbUnderlyingName = dbName + '.protodb';
     const isNewDb = await checkNewDb(dbUnderlyingName, mode);
-    const lokiDb = await getDb(dbUnderlyingName, mode, isNewDb);
+    const lokiDb = await getDb(dbUnderlyingName, mode, isNewDb, options.dbAutoSaveCB);
     return new Protowallet(options, lokiDb, isNewDb);
   }
 }
@@ -130,7 +131,7 @@ const checkNewDb = async (dbName: string, mode: ApplicationMode) => {
   return true;
 };
 
-const getDb = (dbName: string, mode: ApplicationMode, isNewDb: boolean): Promise<Loki> => {
+const getDb = (dbName: string, mode: ApplicationMode, isNewDb: boolean, autosaveCb?: () => void): Promise<Loki> => {
   return new Promise((resolve, reject) => {
     let adapter: LokiPersistenceAdapter;
     if (mode === 'web') {
@@ -139,7 +140,12 @@ const getDb = (dbName: string, mode: ApplicationMode, isNewDb: boolean): Promise
       adapter = new loki.LokiFsAdapter();
     }
 
-    const lokiDb: Loki = new loki(dbName, { adapter });
+    const lokiDb: Loki = new loki(dbName, {
+      adapter,
+      autosave: true,
+      autosaveInterval: 1000,
+      autosaveCallback: autosaveCb,
+    });
 
     if (isNewDb) {
       initializeFeed(lokiDb);
