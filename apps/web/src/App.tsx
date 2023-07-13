@@ -15,18 +15,26 @@ import { Protowallet, ProtowalletOptions } from '@protowallet/core';
 import { ProtoContext } from './hooks/use-proto';
 import SingleMessageComponent from './components/general/SingleMessageComponent';
 import { ApplicationMode } from '@protowallet/types';
+import SelectorScreen from './components/selector-screen/SelectorScreen';
 
 function App() {
   const location = useLocation();
 
   const [proto, setProto] = useState<Protowallet | null>(null);
+  const [dbName, setDbName] = useState<string>('');
 
-  const createProto = async (): Promise<void> => {
-    const protoMode = process.env.REACT_APP_PROTO_MODE;
+  const createProto = (dbNameProp: string): void => {
+    console.log('Creating proto with dbName: ', dbNameProp);
+    setDbName(dbNameProp);
+    const protoMode = process.env.REACT_APP_PROTO_MODE as ApplicationMode;
     Protowallet.create({
-      mode: protoMode as ApplicationMode,
-      dbName: 'protowallet',
+      mode: protoMode,
+      dbName: dbNameProp,
     }).then(setProto);
+  };
+
+  const derefProto = (): void => {
+    setProto(null);
   };
 
   useEffect(() => {
@@ -44,20 +52,11 @@ function App() {
   return (
     <>
       {!proto && (
-        <div>
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              createProto();
-            }}
-          >
-            Create Proto
-          </button>
-        </div>
+        <SelectorScreen dbSelected={createProto}/>
       )}
       {proto && (
         <ProtoContext.Provider value={proto}>
-          <GeneralLayout>
+          <GeneralLayout derefProto={derefProto} dbName={dbName}>
             <Routes>
               <Route path="/home" element={ComingSoonPage} />
               <Route path='/analytics' element={ComingSoonPage} />
