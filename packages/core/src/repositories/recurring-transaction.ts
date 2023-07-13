@@ -42,6 +42,7 @@ export class RecurringTransactionRepository extends AbstractRepositoryAdapter<Re
       throw EntityNotFoundException('RecurringTransaction', options.id);
     }
     transaction.accountId = options.accountId || transaction.accountId;
+    transaction.title = options.title || transaction.title;
     transaction.type = options.type || transaction.type;
     transaction.category = options.category || transaction.category;
     transaction.amount = options.amount || transaction.amount;
@@ -53,12 +54,13 @@ export class RecurringTransactionRepository extends AbstractRepositoryAdapter<Re
 
   async validate(entity: RecurringTransaction): Promise<void> {
     const case1 = !!(entity.id && entity.id > 0);
-    const case2 = !!(entity.accountId && entity.accountId > 0);
-    const case3 = !!(entity.type && entity.type >= 0);
-    const case4 = !!(entity.category && entity.category >= 0);
-    const case5 = !!entity.amount;
-    const case6 = !!entity.createdAt;
-    const case7 = entity.endTokenType >= 0;
+    const case2 = !!entity.title;
+    const case3 = !!(entity.accountId && entity.accountId > 0);
+    const case4 = !!(entity.type && entity.type >= 0);
+    const case5 = !!(entity.category && entity.category >= 0);
+    const case6 = !!entity.amount;
+    const case7 = !!entity.createdAt;
+    const case8 = entity.endTokenType >= 0;
 
     let caseValidEndRecurrenceBy = false;
     if (entity.endTokenType === EndRecurrenceBy.Count) {
@@ -69,7 +71,7 @@ export class RecurringTransactionRepository extends AbstractRepositoryAdapter<Re
       caseValidEndRecurrenceBy = true;
     }
 
-    const isValidPartial = case1 && case2 && case3 && case4 && case5 && case6 && case7 && caseValidEndRecurrenceBy;
+    const isValidPartial = case1 && case2 && case3 && case4 && case5 && case6 && case7 && case8 && caseValidEndRecurrenceBy;
     if (!isValidPartial) {
       throw EntityNotValidException('RecurringTransaction', entity);
     }

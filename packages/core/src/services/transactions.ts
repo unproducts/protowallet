@@ -15,6 +15,7 @@ export class TransactionsManager {
   private recurringToTransactionLogic = (recurringTransaction: RecurringTransaction, timestamp: Date, index: number): Transaction => ({
     id: recurringTransaction.id * 1000 + index,
     accountId: recurringTransaction.accountId,
+    title: recurringTransaction.title,
     type: recurringTransaction.type,
     category: recurringTransaction.category,
     amount: recurringTransaction.amount,

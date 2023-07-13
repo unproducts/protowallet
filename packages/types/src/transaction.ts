@@ -4,6 +4,7 @@ import { Amount } from './general';
 
 export type Transaction = {
   accountId: number;
+  title: string;
   type: RecordType;
   category: number;
   amount: Amount;
@@ -15,6 +16,7 @@ export type Transaction = {
 
 export type RecurringTransaction = {
   accountId: number;
+  title: string;
   type: RecordType;
   category: number;
   amount: Amount;
