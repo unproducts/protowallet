@@ -2,7 +2,7 @@ import React from 'react';
 
 // @ts-ignore
 import ProtoLogo from '../../assets/proto-logo.png';
-import DBSelector from './DbSelector';
+import DBSelector from './DBSelector';
 
 export type SelectorScreenProps = {
   dbSelected: (dbName: string) => void;

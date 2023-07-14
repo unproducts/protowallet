@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import { RecurringTransaction } from '@protowallet/types';
 
-import RecurringTransactionTableItem from './recurringTransactionTableItem';
+import RecurringTransactionTableItem from './RecurringTransactionTableItem';
 
 export type RecurringTransactionsTableProps = {
   allItems: RecurringTransaction[];
