@@ -10,7 +10,7 @@ export type FindRecurringTransactionsOptions = {
   accounts?: number[];
   categories?: number[];
   labels?: number[];
-  recordTypes?: number[];
+  recordTypes?: string[];
   amountRange?: StrictRange<number>;
 };
 
@@ -32,7 +32,7 @@ export class RecurringTransactionRepository extends AbstractRepositoryAdapter<Re
 
   async query(options: FindRecurringTransactionsOptions): Promise<RecurringTransaction[]> {
     const query: Record<string, any> = this.prepareQueryFromOptions(options);
-    const RecurringTransactions: RecurringTransaction[] = this.feed.find(query);
+    const RecurringTransactions: RecurringTransaction[] = this.feed.find(query).map(this.entityLoadHook);
     return RecurringTransactions;
   }
 
@@ -56,7 +56,7 @@ export class RecurringTransactionRepository extends AbstractRepositoryAdapter<Re
     const case1 = !!(entity.id && entity.id > 0);
     const case2 = !!entity.title;
     const case3 = !!(entity.accountId && entity.accountId > 0);
-    const case4 = !!(entity.type && entity.type >= 0);
+    const case4 = !!(entity.type);
     const case5 = !!(entity.category && entity.category >= 0);
     const case6 = !!entity.amount;
     const case7 = !!entity.createdAt;

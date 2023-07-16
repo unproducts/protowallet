@@ -2,7 +2,7 @@ import { IdEntity, Label } from '@protowallet/types';
 import { AbstractRepositoryAdapter } from './base';
 import { EntityNotFoundException, EntityNotValidException, utils } from '@protowallet/common';
 
-export type CreateLabelOptions = Omit<Label, 'id'>;
+export type CreateLabelOptions = Omit<Label, 'id' | 'createdAt'>;
 export type UpdateLabelOptions = Partial<Label> & IdEntity;
 
 export class LabelRepository extends AbstractRepositoryAdapter<Label> {
