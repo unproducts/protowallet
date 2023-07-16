@@ -27,9 +27,9 @@ export enum Currency {
 }
 
 export enum RecordType {
-  Expense,
-  Income,
-  Transfer,
+  Expense = "Expense",
+  Income = "Income",
+  Transfer = "Transfer",
 }
 
 export enum RecordDirection {
