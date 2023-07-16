@@ -6,10 +6,10 @@ import { EntityCreationException, EntityNotFoundException, EntityUpdateException
 export type UpdateDTO<T extends IdEntity> = Omit<Partial<T>, 'id'>;
 
 export interface Repository<T extends IdEntity & GeneralTimestamedEntity> {
-  get(id: number): Promise<T | null>;
-  getAll(): Promise<T[]>;
-  count(): Promise<number>;
-  getAllRecord(): Promise<Record<number, T>>;
+  get(id: number): T | null;
+  getAll(): T[];
+  count(): number;
+  getAllRecord(): Record<number, T>;
   
   delete(id: number): Promise<void>;
 
@@ -24,7 +24,7 @@ export abstract class AbstractRepositoryAdapter<T extends IdEntity & GeneralTime
     this.feed = feed;
   }
 
-  async get(id: number): Promise<T | null> {
+  get(id: number): T | null {
     return this.entityLoadHook(this.feed.findOne({
       id: {
         $eq: id,
@@ -32,24 +32,24 @@ export abstract class AbstractRepositoryAdapter<T extends IdEntity & GeneralTime
     }) as T);
   }
 
-  async getOrThrow(id: number): Promise<T> {
-    const entity = await this.get(id);
+  getOrThrow(id: number): T {
+    const entity = this.get(id);
     if (entity) {
       return entity;
     }
     throw EntityNotFoundException(this.feed.name, id);
   }
 
-  async getAll(): Promise<T[]> {
+  getAll(): T[] {
     return this.feed.find().map(this.entityLoadHook);
   }
 
-  async getAllRecord(): Promise<Record<number, T>> {
-    const entities = await this.getAll();
+  getAllRecord(): Record<number, T> {
+    const entities = this.getAll();
     return this.recordify(entities);
   }
 
-  async count(): Promise<number> {
+  count(): number {
     return this.feed.count();
   }
 

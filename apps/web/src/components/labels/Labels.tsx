@@ -14,7 +14,7 @@ const Labels = () => {
   const [labels, setLabels] = useState<Label[]>([]);
 
   useEffect(() => {
-    labelRepository.getAll().then(setLabels);
+    setLabels(labelRepository.getAll());
   }, []);
 
   const createLabel = (options: CreateLabelOptions) => {

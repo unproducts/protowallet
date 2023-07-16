@@ -13,7 +13,7 @@ function RecurringTransactions() {
   const [selectedRecurringTransactions, setSelectedRecurringTransactions] = useState<RecurringTransaction[]>([]);
 
   useEffect(() => {
-    recurringTransactionRepository.getAll().then(setRecurringTransactions);
+    setRecurringTransactions(recurringTransactionRepository.getAll());
   }, []);
 
   const remove = (recurringTransaction: RecurringTransaction) => {
