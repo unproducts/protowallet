@@ -101,10 +101,10 @@ function DateSelect({onChange}) {
                 <button
                   key={option.id}
                   tabIndex={0}
-                  className={`flex items-center w-full hover:bg-slate-50 py-1 px-3 cursor-pointer ${option.id === selected && 'text-indigo-500'}`}
+                  className={`flex items-center w-full hover:bg-slate-50 py-1 px-3 cursor-pointer ${option.id === selected && 'text-primary-500'}`}
                   onClick={() => { setSelected(option.id); setDropdownOpen(false); onChange(option.period);}}
                 >
-                  <svg className={`shrink-0 mr-2 fill-current text-indigo-500 ${option.id !== selected && 'invisible'}`} width="12" height="9" viewBox="0 0 12 9">
+                  <svg className={`shrink-0 mr-2 fill-current text-primary-500 ${option.id !== selected && 'invisible'}`} width="12" height="9" viewBox="0 0 12 9">
                     <path d="M10.28.28L3.989 6.575 1.695 4.28A1 1 0 00.28 5.695l3 3a1 1 0 001.414 0l7-7A1 1 0 0010.28.28z" />
                   </svg>
                   <span>{option.period}</span>
