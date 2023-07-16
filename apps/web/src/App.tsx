@@ -16,6 +16,7 @@ import { ProtoContext } from './hooks/use-proto';
 import SingleMessageComponent from './components/general/SingleMessageComponent';
 import { ApplicationMode } from '@protowallet/types';
 import SelectorScreen from './components/selector-screen/SelectorScreen';
+import Transactions from './components/transactions/Transactions';
 
 function App() {
   const location = useLocation();
@@ -65,7 +66,7 @@ function App() {
               <Route path="/labels" element={<Labels />} />
               <Route path="/categories" element={<Categories />} />
               <Route path="/recurring-transactions" element={<RecurringTransactions />} />
-              <Route path="/transactions" element={ComingSoonPage} />
+              <Route path="/transactions" element={<Transactions/>} />
               <Route path="/triggers" element={ComingSoonPage} />
               <Route path="/settings" element={ComingSoonPage} />
             </Routes>

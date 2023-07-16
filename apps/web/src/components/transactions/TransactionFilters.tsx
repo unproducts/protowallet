@@ -3,32 +3,32 @@ import Accordion from '../shared/Accordion';
 import Datepicker from '../shared/Datepicker';
 import DateSelect from '../shared/DateSelect';
 import CheckboxList from '../shared/CheckBoxList';
-import MinMaxAmountInput from '../shared/MinMaxAmountInput';
-
-import { enums, lookups, transactions } from '@wallet/core';
+import { Account, Category, Label } from '@protowallet/types';
+import { FindTransactionsOptions } from '@protowallet/core/dist/repositories';
+import { RecordType } from '@protowallet/lookups';
 
 export type DateSelectedType = 'Today' | 'Last 7 Days' | 'Last Month' | 'Last 12 Months' | 'All Time' | 'Custom';
 
 export type TransactionsFilterBarOptions = {
-  accounts: lookups.Account[];
-  categories: lookups.Category[];
-  labels: lookups.Label[];
-  setFilterQuery: (q: transactions.GetAllTransactionsOptions) => void;
+  accounts: Account[];
+  categories: Category[];
+  labels: Label[];
+  setFilterQuery: (q: FindTransactionsOptions) => void;
 };
 
 function TransactionsFilterBar(options: TransactionsFilterBarOptions) {
   const [dateSelectedType, setDateSelectedType] = useState<DateSelectedType>('Last 7 Days');
-  const [selectedAccounts, setSelectedAccounts] = useState<lookups.Account[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<lookups.Category[]>([]);
-  const [selectedLabels, setSelectedLabels] = useState<lookups.Label[]>([]);
-  const [selectedRecordType, setSelectedRecordType] = useState<enums.RecordType[]>([]);
-  const [selectedMinAmmount, setSelectedMinAmmount] = useState<number>();
-  const [selectedMaxAmmount, setSelectedMaxAmmount] = useState<number>();
+
+  // Filters
+  const [selectedAccounts, setSelectedAccounts] = useState<Account[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
+  const [selectedLabels, setSelectedLabels] = useState<Label[]>([]);
+  const [selectedRecordType, setSelectedRecordType] = useState<RecordType[]>([]);
   const [selectedStartDate, setSelectedStartDate] = useState<Date>(new Date(new Date().getTime() - 6 * 24 * 60 * 60 * 1000));
   const [selectedEndDate, setSelectedEndDate] = useState<Date>(new Date());
 
   useEffect(() => {
-    const filterQuery: transactions.GetAllTransactionsOptions = {
+    const filterQuery: FindTransactionsOptions = {
       dateRange: {
         from: selectedStartDate,
         to: selectedEndDate,
@@ -46,22 +46,8 @@ function TransactionsFilterBar(options: TransactionsFilterBarOptions) {
     if (selectedRecordType?.length) {
       filterQuery.recordTypes = selectedRecordType;
     }
-    if (selectedMaxAmmount || selectedMinAmmount) {
-      filterQuery.amountRange = {};
-      if (selectedMaxAmmount) filterQuery.amountRange.to = selectedMaxAmmount;
-      if (selectedMinAmmount) filterQuery.amountRange.from = selectedMinAmmount;
-    }
     options.setFilterQuery(filterQuery);
-  }, [
-    selectedAccounts,
-    selectedCategories,
-    selectedLabels,
-    selectedRecordType,
-    selectedMinAmmount,
-    selectedMaxAmmount,
-    selectedStartDate,
-    selectedEndDate,
-  ]);
+  }, [selectedAccounts, selectedCategories, selectedLabels, selectedRecordType, selectedStartDate, selectedEndDate]);
 
   useEffect(() => {
     switch (dateSelectedType) {
@@ -85,97 +71,87 @@ function TransactionsFilterBar(options: TransactionsFilterBarOptions) {
   }, [dateSelectedType]);
 
   return (
-    <div className="space-y-8">
-      {/* White box */}
-      <div className="bg-white shadow-lg rounded-sm border border-slate-200 p-5 min-w-80">
-        <div className="grid md:grid-cols-2 xl:grid-cols-1 gap-6">
-          {/* Accounts */}
-          <div>
-            <Accordion
-              children={
-                <CheckboxList
-                  filterOptions={options.accounts}
-                  selectedFilters={selectedAccounts}
-                  setSelectedFilters={setSelectedAccounts}
-                  setDisplayValue={(t) => t.name}
-                ></CheckboxList>
-              }
-              title={'Accounts'}
-              show={true}
-            ></Accordion>
-          </div>
-          {/* Categories */}
-          <div>
-            <Accordion
-              children={
-                <CheckboxList
-                  filterOptions={options.categories}
-                  selectedFilters={selectedCategories}
-                  setSelectedFilters={setSelectedCategories}
-                  setDisplayValue={(t) => t.title}
-                ></CheckboxList>
-              }
-              title={'Categories'}
-              show={true}
-            ></Accordion>
-          </div>
-          {/* Labels */}
-          <div>
-            <Accordion
-              children={
-                <CheckboxList
-                  filterOptions={options.labels}
-                  selectedFilters={selectedLabels}
-                  setSelectedFilters={setSelectedLabels}
-                  setDisplayValue={(t) => t.value}
-                ></CheckboxList>
-              }
-              title={'Labels'}
-              show={true}
-            ></Accordion>
-          </div>
-          {/* Record Type */}
+    <div className="bg-white shadow-lg rounded-sm border border-slate-200 p-5 min-w-80">
+      <i className="text-sm text-primary-500">Filter Results</i>
+      <div className="grid md:grid-cols-2 xl:grid-cols-1 gap-6 pt-4">
+        {/* Accounts */}
+        <div>
           <Accordion
             children={
               <CheckboxList
-                filterOptions={[enums.RecordType.Expense, enums.RecordType.Income, enums.RecordType.Transfer]}
-                selectedFilters={selectedRecordType}
-                setSelectedFilters={setSelectedRecordType}
-                setDisplayValue={(t) => {
-                  switch (t) {
-                    case enums.RecordType.Expense:
-                      return 'Expense';
-                    case enums.RecordType.Income:
-                      return 'Income';
-                    case enums.RecordType.Transfer:
-                      return 'Transfer';
-                  }
-                }}
-              />
+                filterOptions={options.accounts}
+                selectedFilters={selectedAccounts}
+                setSelectedFilters={setSelectedAccounts}
+                setDisplayValue={(t) => t.name}
+              ></CheckboxList>
             }
-            title={'Record Type'}
+            title={'Accounts'}
             show={true}
           ></Accordion>
-          {/* Amount */}
-          <div>
-            <Accordion
-              title={'Amount'}
-              children={<MinMaxAmountInput setSelectedMinAmmount={setSelectedMinAmmount} setSelectedMaxAmmount={setSelectedMaxAmmount} />}
-              show={true}
-            ></Accordion>
-          </div>
-          {/* Date*/}
-          <div>
-            <div className="text-sm text-slate-800 font-medium">Date</div>
-            <DateSelect onChange={setDateSelectedType}></DateSelect>
-            <br />
-            {dateSelectedType === 'Custom' ? (
-              <div>
-                <div className="text-sm text-slate-800 font-medium">Custom Date</div>
-                <Datepicker align={'middle'} setSelectedStartDate={setSelectedStartDate} setSelectedEndDate={setSelectedEndDate}></Datepicker>
-              </div>
-            ) : null}
-          </div>
+        </div>
+        {/* Categories */}
+        <div>
+          <Accordion
+            children={
+              <CheckboxList
+                filterOptions={options.categories}
+                selectedFilters={selectedCategories}
+                setSelectedFilters={setSelectedCategories}
+                setDisplayValue={(t) => t.title}
+              ></CheckboxList>
+            }
+            title={'Categories'}
+            show={false}
+          ></Accordion>
+        </div>
+        {/* Labels */}
+        <div>
+          <Accordion
+            children={
+              <CheckboxList
+                filterOptions={options.labels}
+                selectedFilters={selectedLabels}
+                setSelectedFilters={setSelectedLabels}
+                setDisplayValue={(t) => t.value}
+              ></CheckboxList>
+            }
+            title={'Labels'}
+            show={false}
+          ></Accordion>
+        </div>
+        {/* Record Type */}
+        <Accordion
+          children={
+            <CheckboxList
+              filterOptions={[RecordType.Expense, RecordType.Income, RecordType.Transfer]}
+              selectedFilters={selectedRecordType}
+              setSelectedFilters={setSelectedRecordType}
+              setDisplayValue={(t) => {
+                switch (t) {
+                  case RecordType.Expense:
+                    return 'Expense';
+                  case RecordType.Income:
+                    return 'Income';
+                  case RecordType.Transfer:
+                    return 'Transfer';
+                }
+              }}
+            />
+          }
+          title={'Record Type'}
+          show={false}
+        ></Accordion>
+        {/* Date*/}
+        <div>
+          <div className="text-sm text-slate-800 font-medium">Date</div>
+          <DateSelect onChange={setDateSelectedType}></DateSelect>
+          <br />
+          {dateSelectedType === 'Custom' ? (
+            <div>
+              <div className="text-sm text-slate-800 font-medium">Custom Date</div>
+              <Datepicker align={'middle'} setSelectedStartDate={setSelectedStartDate} setSelectedEndDate={setSelectedEndDate}></Datepicker>
+            </div>
+          ) : null}
         </div>
       </div>
     </div>

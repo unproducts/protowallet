@@ -1,56 +1,77 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import TransactionsTable from './TransactionTable';
 import TransactionsFilterBar from './TransactionFilters';
-import NewTransaction from './TransactionModal';
-import { accounts, lookups, transactions, labels, enums, categories } from '@wallet/core';
+import SinglePageHeader from '../shared/SinglePageHeader';
+import { Transaction } from '@protowallet/types';
+import { useProto } from '../../hooks/use-proto';
+import { EntitiesEnum } from '@protowallet/core';
+import {
+  AccountRepository,
+  CategoryRepository,
+  CreateTransactionOptions,
+  FindTransactionsOptions,
+  LabelRepository,
+  TransactionRepository,
+  UpdateTransactionOptions,
+} from '@protowallet/core/dist/repositories';
+import { NewTransactionButton, NewUpdateTransactionActionProps } from './NewUpdateTransactionAction';
 
 function Transactions() {
-  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
-  const [txs, setTxs] = useState<lookups.Transaction[]>([]);
+  const proto = useProto();
 
-  // @ts-ignore
-  const [query, setQuery] = useState<transactions.GetAllTransactionsOptions>({});
+  // Get repositories
+  const transactionsRepo = proto.getRepository(EntitiesEnum.Transaction) as TransactionRepository;
+  const accountRepo = proto.getRepository(EntitiesEnum.Account) as AccountRepository;
+  const categoryRepo = proto.getRepository(EntitiesEnum.Category) as CategoryRepository;
+  const labelRepo = proto.getRepository(EntitiesEnum.Label) as LabelRepository;
 
-  const [accnts, setAccnts] = useState<lookups.Account[]>([]);
-  const [lbls, setLbls] = useState<lookups.Label[]>([]);
-  const [ctgrs, setCtgrs] = useState<lookups.Category[]>([]);
-  const [transactions, setTransactions] = useState<any>([]);
+  // Get services
+  const transactionsManger = proto.getTransactionsManager();
 
-  // useEffect(() => {
-  //   accounts.getAllAccounts().then(setAccnts);
-  //   labels.getAllLabels_Flat().then(setLbls);
-  //   categories.getAllCategories().then(setCtgrs);
-  // }, [])
+  // initialize data
+  const allAccounts = accountRepo.getAll();
+  const allCategories = categoryRepo.getAll();
+  const allLabels = labelRepo.getAll();
 
+  const [txs, setTxs] = useState<Transaction[]>([]);
 
-  // useEffect(() => {
-  //   if (query && query.dateRange) {
-  //     transactions.getAllTransactions(query).then(setTxs);
-  //   } else {
-  //     setTxs([]);
-  //   }
-  // }, [query]);
+  const applyFilter = (options: FindTransactionsOptions) => {
+    transactionsManger.query(options).then(setTxs);
+  };
+
+  const createTxn = (options: CreateTransactionOptions) => {
+    transactionsRepo.create(options).then((createdTx) => {
+      const newTxs = [...txs, createdTx];
+      newTxs.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
+      setTxs(newTxs);
+    });
+  }
+
+  const updateTxn = (options: UpdateTransactionOptions) => {
+    transactionsRepo.update(options).then((updatedTx) => {
+      setTxs(txs.map((t) => (t.id === updatedTx.id ? updatedTx : t)));
+    });
+  };
+
+  const deleteTxn = (txn: Transaction) => {
+    transactionsRepo.delete(txn.id).then(() => {
+      setTxs(txs.filter((t) => t.id !== txn.id));
+    });
+  };
+
+  const newTxnProps: Omit<NewUpdateTransactionActionProps, 'children'> = {
+    accounts: allAccounts,
+    categories: allCategories,
+    labels: allLabels,
+    createFn: createTxn,
+    updateFn: updateTxn,
+  };
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8 w-full mx-auto">
-      {/* Page header */}
-      <div className="sm:flex sm:justify-between sm:items-center mb-5">
-        {/* Left: Title */}
-        <div className="mb-4 sm:mb-0">
-          <h1 className="text-2xl md:text-3xl text-slate-800 font-bold">Transactions ✨</h1>
-        </div>
-
-        {/* New Transaction button */}
-        <NewTransaction />
-      </div>
-
-      {/* Page content */}
-      <div className="flex flex-col space-y-10 sm:flex-row sm:space-x-6 sm:space-y-0 md:flex-col md:space-x-0 md:space-y-10 xl:flex-row xl:space-x-6 xl:space-y-0 mt-9">
-        {/* Sidebar */}
-        <TransactionsFilterBar setFilterQuery={setQuery} accounts={accnts} categories={ctgrs} labels={lbls} />
-
-        {/* Content */}
+      <SinglePageHeader title="Transactions" cta={<NewTransactionButton {...newTxnProps} />} />
+      <div className="flex space-y-10 sm:flex-row sm:space-x-6 sm:space-y-0 md:flex-col md:space-x-0 md:space-y-10 xl:flex-row xl:space-x-6 xl:space-y-0 mt-9">
         <div className="w-full">
           {/* Search form */}
           <div className="mb-5">
@@ -82,8 +103,9 @@ function Transactions() {
             <div className="text-sm text-slate-500 italic">Showing {txs.length} Transactions</div>
           </div>
 
-          <TransactionsTable setTransactions={setTransactions} />
+          <TransactionsTable transactions={txs} deleteFn={deleteTxn} updateFn={updateTxn} />
         </div>
+        <TransactionsFilterBar setFilterQuery={applyFilter} accounts={allAccounts} categories={allCategories} labels={allLabels} />
       </div>
     </div>
   );

@@ -1,56 +1,55 @@
+import { UpdateTransactionOptions } from '@protowallet/core/dist/repositories';
+import { RecordDirection, RecordType } from '@protowallet/lookups';
+import { Amount, Transaction } from '@protowallet/types';
 import React from 'react';
+import { formatAmount, formatDate } from '../../utils/Utils';
 
-function TransactionsTableItem(props) {
+export type TransactionsTableItemProps = {
+  transaction: Transaction;
+  updateFn: (options: UpdateTransactionOptions) => void;
+  deleteFn: (transaction: Transaction) => void;
+};
 
-  const statusColor = (status) => {
-    switch (status) {
-      case 'Income':
+function TransactionsTableItem(props: TransactionsTableItemProps) {
+  const transaction = props.transaction;
+
+  const statusColor = (txType: RecordType) => {
+    switch (txType) {
+      case RecordType.Income:
         return 'bg-emerald-100 text-emerald-600';
-      case 'Expense':
+      case RecordType.Expense:
         return 'bg-rose-100 text-rose-500';
       default:
         return 'bg-slate-100 text-slate-500';
     }
   };
 
-  const amountColor = (amount) => {
-    switch (amount.charAt(0)) {
-      case '+':
+  const amountColor = (amount: Amount) => {
+    switch (amount.direction) {
+      case RecordDirection.Right:
         return 'text-emerald-500';
       default:
-        return 'text-slate-700';
+        return 'text-red-500';
     }
   };
 
   return (
     <tr>
-      <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px">
-        <div className="flex items-center">
-          <label className="inline-flex">
-            <span className="sr-only">Select</span>
-            <input id={props.id} className="form-checkbox" type="checkbox" onChange={props.handleClick} checked={props.isChecked} />
-          </label>
-        </div>
-      </td>
-      <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap md:w-1/2">
-        <div className="flex items-center">
-          <div className="w-9 h-9 shrink-0 mr-2 sm:mr-3">
-            {/* <img className="rounded-full" src={props.image} width="36" height="36" alt={props.name} /> */}
-            {props.image}
-          </div>
-          <div className="font-medium text-slate-800">{props.name}</div>
-        </div>
+      <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+        <div className="text-left">{transaction.title}</div>
       </td>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-        <div className="text-left">{props.date}</div>
+        <div className="text-left">{formatDate(transaction.createdAt)}</div>
       </td>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-        <div className="text-left">
-          <div className={`text-xs inline-flex font-medium rounded-full text-center px-2.5 py-1 ${statusColor(props.status)}`}>{props.status}</div>
+        <div className={`text-xs inline-flex font-medium rounded-full text-center px-2.5 py-1 ${statusColor(transaction.type)}`}>
+          {transaction.type}
         </div>
       </td>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px">
-        <div className={`text-right font-medium ${amountColor(props.amount)}`}>{props.amount}</div>
+        <div className={`text-right font-medium ${amountColor(transaction.amount)}`}>
+          {formatAmount(transaction.amount.value, transaction.amount.currency)}
+        </div>
       </td>
     </tr>
   );
