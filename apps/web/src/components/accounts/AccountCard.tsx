@@ -3,7 +3,7 @@ import AccountIcon from '../../icons/AccountIcon';
 import { formatAmount } from '../../utils/Utils';
 import { UpdateAccountOptions } from '@protowallet/core/dist/repositories';
 import { CalculatedAccount } from '@protowallet/types';
-import { Currency } from '@protowallet/lookups';
+import { Currency, RecordDirection } from '@protowallet/lookups';
 import EditIcon from '../../icons/EditIcon';
 import DeleteIcon from '../../icons/DeleteIcon';
 import NewUpdateAccountAction from './NewUpdateAccountAction';
@@ -25,15 +25,27 @@ const AccountCard = (props: AccountCardProps) => {
           {props.account.name}
         </span>
         <div className="flex items-center">
-          <NewUpdateAccountAction buttonClassName={`text-accent-${accent}-200 hover:text-accent-${accent}-300`} account={props.account} updateAccountFn={props.updateAccountFn}>
+          <NewUpdateAccountAction
+            buttonClassName={`text-accent-${accent}-200 hover:text-accent-${accent}-300`}
+            account={props.account}
+            updateAccountFn={props.updateAccountFn}
+          >
             <EditIcon className="w-5 h-5" />
           </NewUpdateAccountAction>
-          <button className={`text-accent-${accent}-200 hover:text-accent-${accent}-300 ml-2`} onClick={(e) => {e.preventDefault(); props.deleteAccountFn(props.account.id)}}>
+          <button
+            className={`text-accent-${accent}-200 hover:text-accent-${accent}-300 ml-2`}
+            onClick={(e) => {
+              e.preventDefault();
+              props.deleteAccountFn(props.account.id);
+            }}
+          >
             <DeleteIcon className="w-5 h-5" />
           </button>
         </div>
       </div>
-      <div className="h1">{formatAmount(props.account.balance.value, props.currency)}</div>
+      <div className="text-xl font-bold">
+        {props.account.balance.direction == RecordDirection.Left ? '-' : ''} {formatAmount(props.account.balance.value, props.currency)}
+      </div>
     </div>
   );
 };
