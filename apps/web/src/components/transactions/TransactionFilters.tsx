@@ -82,7 +82,7 @@ function TransactionsFilterBar(options: TransactionsFilterBarOptions) {
                 filterOptions={options.accounts}
                 selectedFilters={selectedAccounts}
                 setSelectedFilters={setSelectedAccounts}
-                setDisplayValue={(t) => t.name}
+                getDisplayValue={(t) => t.name}
               ></CheckboxList>
             }
             title={'Accounts'}
@@ -97,7 +97,7 @@ function TransactionsFilterBar(options: TransactionsFilterBarOptions) {
                 filterOptions={options.categories}
                 selectedFilters={selectedCategories}
                 setSelectedFilters={setSelectedCategories}
-                setDisplayValue={(t) => t.title}
+                getDisplayValue={(t) => t.title}
               ></CheckboxList>
             }
             title={'Categories'}
@@ -112,7 +112,7 @@ function TransactionsFilterBar(options: TransactionsFilterBarOptions) {
                 filterOptions={options.labels}
                 selectedFilters={selectedLabels}
                 setSelectedFilters={setSelectedLabels}
-                setDisplayValue={(t) => t.value}
+                getDisplayValue={(t) => t.value}
               ></CheckboxList>
             }
             title={'Labels'}
@@ -126,7 +126,7 @@ function TransactionsFilterBar(options: TransactionsFilterBarOptions) {
               filterOptions={[RecordType.Expense, RecordType.Income, RecordType.Transfer]}
               selectedFilters={selectedRecordType}
               setSelectedFilters={setSelectedRecordType}
-              setDisplayValue={(t) => {
+              getDisplayValue={(t) => {
                 switch (t) {
                   case RecordType.Expense:
                     return 'Expense';
