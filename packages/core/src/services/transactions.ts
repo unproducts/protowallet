@@ -39,7 +39,7 @@ export class TransactionsManager {
       dateRange: options.dateRange,
     });
     const allTransactions = [...transactions, ...flattenedRecurringTransactions];
-    allTransactions.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+    allTransactions.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
     return allTransactions;
   }
 }
@@ -99,24 +99,24 @@ export class TransactionsGroupingService {
 
   // Groupings
   async groupTransactions_Categorywise(transactions: Transaction[]): Promise<Map<number, Transaction[]>> {
-    return this._groupTransactions<Category>(transactions, this.categoryRepository);
+    return this._groupTransactions<Category>(transactions, this.categoryRepository, 'category');
   }
 
   async groupTransactions_Labelwise(transactions: Transaction[]): Promise<Map<number, Transaction[]>> {
-    return this._groupTransactions<Label>(transactions, this.labelRepository);
+    return this._groupTransactions<Label>(transactions, this.labelRepository, 'labels');
   }
 
   async groupTransactions_Accountwise(transactions: Transaction[]): Promise<Map<number, Transaction[]>> {
-    return this._groupTransactions<Account>(transactions, this.accountRepository);
+    return this._groupTransactions<Account>(transactions, this.accountRepository, 'accountId');
   }
 
-  protected async _groupTransactions<T extends IdEntity & GeneralTimestamedEntity>(transactions: Transaction[], repository: Repository<T>): Promise<Map<number, Transaction[]>> {
+  protected async _groupTransactions<T extends IdEntity & GeneralTimestamedEntity>(transactions: Transaction[], repository: Repository<T>, idLookupKey: keyof Transaction): Promise<Map<number, Transaction[]>> {
     const grouping: Map<number, Transaction[]> = new Map();
     const data: Record<number, T> = await repository.getAllRecord();
 
     for (let index = 0; index < transactions.length; index++) {
       const transaction = transactions[index];
-      const entity = data[transaction.id];
+      const entity = data[transaction[idLookupKey] as number];
       const exisitingTransactions = grouping.get(entity.id) || [];
       exisitingTransactions.push(transaction);
       grouping.set(entity.id, exisitingTransactions);
