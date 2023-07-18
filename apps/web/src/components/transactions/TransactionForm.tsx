@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DatePickerSingle from '../shared/DatepickerSingle';
-import CreatableSelect from 'react-select/creatable';
 import Select from 'react-select';
 import { Account, Amount, Category, Label, Transaction } from '@protowallet/types';
 import { CreateTransactionOptions, UpdateTransactionOptions } from '@protowallet/core/dist/repositories';
@@ -50,54 +49,63 @@ export default function TransactionForm(props: TransactionFormProps) {
 
   // Form Bindings
 
-  const [category, setCategory] = useState<SelectApi<Category> | null>(null);
-  const [labels, setLabels] = useState<readonly SelectApi<Label>[] | null>(null);
-  const [account, setAccount] = useState<SelectApi<Account> | null>(null);
+  const [category, setCategory] = useState<SelectApi<Category> | null>(
+    categoriesAvailable.find((ctg) => ctg.value.id == transaction?.category) || null,
+  );
+  const [labels, setLabels] = useState<readonly SelectApi<Label>[] | null>(
+    labelsAvailable.filter((l) => transaction?.labels.includes(l.value.id)) || null,
+  );
+  const [account, setAccount] = useState<SelectApi<Account> | null>(accountsAvailable.find((acc) => acc.value.id == transaction?.accountId) || null);
 
-  const [title, setTitle] = useState('');
-  const [amountRaw, setAmountRaw] = useState<number>(0);
-  const [recordType, setRecordType] = useState<RecordType>(RecordType.Expense);
-  const [note, setNote] = useState('');
-  const [selectedDates, setSelectedDates] = useState<Date[]>([new Date()]);
+  const [title, setTitle] = useState(transaction?.title || '');
+  const [amountRaw, setAmountRaw] = useState<number>(transaction?.amount.value || 0);
+  const [recordType, setRecordType] = useState<RecordType>(transaction?.type || RecordType.Expense);
+  const [note, setNote] = useState(transaction?.note || '');
+  const [selectedDates, setSelectedDates] = useState<Date[]>([transaction?.createdAt || new Date()]);
 
   const saveTxn = () => {
     if (isUpdating) {
-      props.updateFn && props.updateFn({
-        id: transaction?.id || 0,
-        title,
-        amount: getAmount(amountRaw, recordType),
-        type: recordType,
-        note,
-        createdAt: selectedDates[0],
-        accountId: account?.value.id || 0,
-        category: category?.value.id || 0,
-        labels: labels?.map((l) => l.value.id) || [],
-      });
+      props.updateFn &&
+        props.updateFn({
+          id: transaction?.id || 0,
+          title,
+          amount: getAmount(amountRaw, recordType),
+          type: recordType,
+          note,
+          createdAt: selectedDates[0],
+          accountId: account?.value.id || 0,
+          category: category?.value.id || 0,
+          labels: labels?.map((l) => l.value.id) || [],
+        });
     } else {
-      props.createFn && props.createFn({
-        title,
-        amount: getAmount(amountRaw, recordType),
-        type: recordType,
-        note,
-        createdAt: selectedDates[0],
-        accountId: account?.value.id || 0,
-        category: category?.value.id || 0,
-        labels: labels?.map((l) => l.value.id) || [],
-      });
+      props.createFn &&
+        props.createFn({
+          title,
+          amount: getAmount(amountRaw, recordType),
+          type: recordType,
+          note,
+          createdAt: selectedDates[0],
+          accountId: account?.value.id || 0,
+          category: category?.value.id || 0,
+          labels: labels?.map((l) => l.value.id) || [],
+        });
     }
     props.actionCompleteFn && props.actionCompleteFn(OkCancelAction.Ok);
   };
 
   return (
     <div className="px-5 py-4">
-      <form className='space-y-3'>
+      <form className="space-y-3" onSubmit={saveTxn}>
         {/* Start Group BUtton */}
         <div className="flex flex-wrap justify-center items-center -space-x-px">
           <button
             className={`btn border-slate-200 hover text-slate-600 rounded-none first:rounded-l last:rounded-r ${
               recordType == RecordType.Expense && 'bg-red-500 text-white'
             } `}
-            onClick={(e) => {e.preventDefault(); setRecordType(RecordType.Expense)}}
+            onClick={(e) => {
+              e.preventDefault();
+              setRecordType(RecordType.Expense);
+            }}
           >
             Expense
           </button>
@@ -105,7 +113,10 @@ export default function TransactionForm(props: TransactionFormProps) {
             className={`btn border-slate-200 hover text-slate-600 rounded-none first:rounded-l last:rounded-r ${
               recordType == RecordType.Income && 'bg-green-500 text-white'
             } `}
-            onClick={(e) => {e.preventDefault(); setRecordType(RecordType.Income)}}
+            onClick={(e) => {
+              e.preventDefault();
+              setRecordType(RecordType.Income);
+            }}
           >
             Income
           </button>
@@ -117,6 +128,7 @@ export default function TransactionForm(props: TransactionFormProps) {
           id="title"
           className="form-input w-full px-2 py-1"
           type="text"
+          value={title}
           onChange={(e) => {
             setTitle(e.target.value);
           }}
@@ -128,6 +140,7 @@ export default function TransactionForm(props: TransactionFormProps) {
           id="amountRaw"
           className="form-input w-full px-2 py-1"
           type="number"
+          value={amountRaw}
           onChange={(e) => {
             setAmountRaw(parseInt(e.target.value));
           }}
@@ -135,15 +148,15 @@ export default function TransactionForm(props: TransactionFormProps) {
         <label className="block text-sm font-medium mb-1">
           Account <span className="text-rose-500">*</span>
         </label>
-        <Select options={accountsAvailable} onChange={setAccount} />
+        <Select options={accountsAvailable} value={account} onChange={setAccount} />
         <label className="block text-sm font-medium mb-1">
           Category <span className="text-rose-500">*</span>
         </label>
-        <Select options={categoriesAvailable} onChange={setCategory} />
+        <Select options={categoriesAvailable} value={category} onChange={setCategory} />
         <label className="block text-sm font-medium mb-1">
           Label <span className="text-rose-500">*</span>
         </label>
-        <CreatableSelect options={labelsAvailable} isMulti onChange={setLabels} />
+        <Select options={labelsAvailable} value={labels} isMulti onChange={setLabels} />
         <label className="block text-sm font-medium mb-1">
           Transaction Date <span className="text-rose-500">*</span>
         </label>
@@ -165,12 +178,12 @@ export default function TransactionForm(props: TransactionFormProps) {
           {props.actionCompleteFn && (
             <button
               className="btn-sm border-slate-200 hover:border-slate-300 text-slate-600"
-              onClick={() => props.actionCompleteFn && props.actionCompleteFn(OkCancelAction.Cancel)}
+              onClick={(e) => {e.preventDefault(); props.actionCompleteFn && props.actionCompleteFn(OkCancelAction.Cancel)}}
             >
               Cancel
             </button>
           )}
-          <button type="submit" className="btn-sm bg-primary-500 hover:bg-primary-600 text-white" onClick={saveTxn}>
+          <button type="submit" className="btn-sm bg-primary-500 hover:bg-primary-600 text-white" onClick={(e) => { e.preventDefault(); saveTxn(); }}>
             {isUpdating ? 'Update' : 'Create'}
           </button>
         </div>

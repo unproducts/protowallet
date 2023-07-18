@@ -43,6 +43,7 @@ export class TransactionRepository extends AbstractRepositoryAdapter<Transaction
       throw EntityNotFoundException('Transaction', options.id);
     }
     transaction.accountId = options.accountId || transaction.accountId;
+    transaction.title = options.title || transaction.title;
     transaction.type = options.type || transaction.type;
     transaction.category = options.category || transaction.category;
     transaction.amount = options.amount || transaction.amount;

@@ -26,10 +26,15 @@ const NewUpdateTransactionAction = (props: NewUpdateTransactionActionProps) => {
   const [modelOpen, setModelOpen] = useState<boolean>(false);
   const actionCompleteFn = (_: any) => {
     setModelOpen(false);
-  }
+  };
   return (
     <>
-      <ModalBasic id={utils.generateRandomId()} title={'New Transaction'} modalOpen={modelOpen} setModalOpen={setModelOpen}>
+      <ModalBasic
+        id={utils.generateRandomId()}
+        title={(props.transaction ? 'Update' : 'New') + 'Transaction'}
+        modalOpen={modelOpen}
+        setModalOpen={setModelOpen}
+      >
         <TransactionForm {...props} actionCompleteFn={actionCompleteFn} />
       </ModalBasic>
       <button
