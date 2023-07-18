@@ -38,7 +38,7 @@ export enum RecordDirection {
 }
 
 export enum EndRecurrenceBy {
-  Count,
-  EndDate,
-  NeverEnd,
+  Count = "Count",
+  EndDate = "EndDate",
+  NeverEnd = "NeverEnd",
 }

@@ -7,7 +7,7 @@ import { Account, Category, Label } from '@protowallet/types';
 import { FindTransactionsOptions } from '@protowallet/core/dist/repositories';
 import { RecordType } from '@protowallet/lookups';
 
-export type DateSelectedType = 'Today' | 'Last 7 Days' | 'Last Month' | 'Last 12 Months' | 'All Time' | 'Custom';
+export type DateSelectedType = 'Today' | 'Last 7 Days' | 'Last Month' | 'Last 12 Months' | 'Custom';
 
 export type TransactionsFilterBarOptions = {
   accounts: Account[];

@@ -22,10 +22,6 @@ function DateSelect({onChange}) {
     },
     {
       id: 4,
-      period: 'All Time'
-    },
-    {
-      id: 5,
       period: 'Custom'
     }
   ];

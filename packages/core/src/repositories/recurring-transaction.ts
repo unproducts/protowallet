@@ -46,21 +46,31 @@ export class RecurringTransactionRepository extends AbstractRepositoryAdapter<Re
     transaction.type = options.type || transaction.type;
     transaction.category = options.category || transaction.category;
     transaction.amount = options.amount || transaction.amount;
+    transaction.startDate = options.startDate || transaction.startDate;
     transaction.labels = options.labels || transaction.labels;
     transaction.endTokenType = options.endTokenType || transaction.endTokenType;
     transaction.endToken = options.endToken || transaction.endToken;
     return this._update(transaction);
   }
 
+  protected entityLoadHook(entity: RecurringTransaction): RecurringTransaction {
+    const updatedEntity = super.entityLoadHook(entity);
+    updatedEntity.startDate = new Date(updatedEntity.startDate);
+    if (updatedEntity.endTokenType === EndRecurrenceBy.EndDate) {
+      updatedEntity.endToken = new Date(updatedEntity.endToken as Date);
+    }
+    return updatedEntity;
+  }
+
   async validate(entity: RecurringTransaction): Promise<void> {
     const case1 = !!(entity.id && entity.id > 0);
     const case2 = !!entity.title;
     const case3 = !!(entity.accountId && entity.accountId > 0);
-    const case4 = !!(entity.type);
+    const case4 = !!entity.type;
     const case5 = !!(entity.category && entity.category >= 0);
     const case6 = !!entity.amount;
     const case7 = !!entity.createdAt;
-    const case8 = entity.endTokenType >= 0;
+    const case8 = !!entity.endTokenType;
 
     let caseValidEndRecurrenceBy = false;
     if (entity.endTokenType === EndRecurrenceBy.Count) {

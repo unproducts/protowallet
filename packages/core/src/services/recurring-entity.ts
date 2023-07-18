@@ -14,6 +14,19 @@ export class RecurringEntityFlattener {
     const flattenedEntities: T[] = [];
     for (let index = 0; index < recurringEntities.length; index++) {
       const recurringEntity = recurringEntities[index];
+      let calculatedDateRange: StrictRange<Date>;
+      if (recurringEntity.startDate < options.dateRange.from) {
+        calculatedDateRange = {
+          from: options.dateRange.from,
+          to: options.dateRange.to,
+        };
+      } else {
+        calculatedDateRange = {
+          from: recurringEntity.startDate,
+          to: options.dateRange.to,
+        };
+      }
+      options.dateRange = calculatedDateRange;
       const flattenedEntity = await this.flattenEntity(recurringEntity, options);
       flattenedEntities.push(...flattenedEntity);
     }
