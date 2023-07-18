@@ -27,7 +27,7 @@ function DateSelect({onChange}) {
   ];
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [selected, setSelected] = useState(2);
+  const [selected, setSelected] = useState(1);
 
   const trigger = useRef<any>(null);
   const dropdown = useRef<any>(null);
