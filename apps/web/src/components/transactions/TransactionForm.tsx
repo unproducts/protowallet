@@ -9,8 +9,8 @@ import { OkCancelAction } from '../../constants/enums';
 
 export type TransactionFormProps = {
   transaction?: Transaction;
-  updateFn: (options: UpdateTransactionOptions) => void;
-  createFn: (options: CreateTransactionOptions) => void;
+  updateFn?: (options: UpdateTransactionOptions) => void;
+  createFn?: (options: CreateTransactionOptions) => void;
 
   accounts: Account[];
   labels: Label[];
@@ -31,10 +31,10 @@ export type SelectApi<T> = {
   label: keyof T;
 };
 
-const getAmount = (amountRaw: number): Amount => {
+const getAmount = (amountRaw: number, type: RecordType): Amount => {
   return {
     value: Math.abs(amountRaw),
-    direction: amountRaw >= 0 ? RecordDirection.Right : RecordDirection.Left,
+    direction: type == RecordType.Income ? RecordDirection.Right : RecordDirection.Left,
     currency: Currency.INR,
   };
 };
@@ -58,28 +58,28 @@ export default function TransactionForm(props: TransactionFormProps) {
   const [amountRaw, setAmountRaw] = useState<number>(0);
   const [recordType, setRecordType] = useState<RecordType>(RecordType.Expense);
   const [note, setNote] = useState('');
-  const [createdAt, setCreatedAt] = useState<Date>(new Date());
+  const [selectedDates, setSelectedDates] = useState<Date[]>([new Date()]);
 
   const saveTxn = () => {
     if (isUpdating) {
-      props.updateFn({
+      props.updateFn && props.updateFn({
         id: transaction?.id || 0,
         title,
-        amount: getAmount(amountRaw),
+        amount: getAmount(amountRaw, recordType),
         type: recordType,
         note,
-        createdAt,
+        createdAt: selectedDates[0],
         accountId: account?.value.id || 0,
         category: category?.value.id || 0,
         labels: labels?.map((l) => l.value.id) || [],
       });
     } else {
-      props.createFn({
+      props.createFn && props.createFn({
         title,
-        amount: getAmount(amountRaw),
+        amount: getAmount(amountRaw, recordType),
         type: recordType,
         note,
-        createdAt,
+        createdAt: selectedDates[0],
         accountId: account?.value.id || 0,
         category: category?.value.id || 0,
         labels: labels?.map((l) => l.value.id) || [],
@@ -108,14 +108,6 @@ export default function TransactionForm(props: TransactionFormProps) {
             onClick={(e) => {e.preventDefault(); setRecordType(RecordType.Income)}}
           >
             Income
-          </button>
-          <button
-            className={`btn border-slate-200 hover text-slate-600 rounded-none first:rounded-l last:rounded-r ${
-              recordType == RecordType.Transfer && 'bg-slate-600 text-white'
-            } `}
-            onClick={(e) => {e.preventDefault(); setRecordType(RecordType.Transfer)}}
-          >
-            Transfer
           </button>
         </div>
         <label className="block text-sm font-medium mb-1" htmlFor="title">
@@ -155,7 +147,7 @@ export default function TransactionForm(props: TransactionFormProps) {
         <label className="block text-sm font-medium mb-1">
           Transaction Date <span className="text-rose-500">*</span>
         </label>
-        <DatePickerSingle setSelectedDate={setCreatedAt} />
+        <DatePickerSingle setSelectedDate={setSelectedDates} />
 
         <label className="block text-sm font-medium mb-1" htmlFor="note">
           Note <span className="text-rose-500">*</span>

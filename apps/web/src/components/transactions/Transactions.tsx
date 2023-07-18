@@ -103,7 +103,14 @@ function Transactions() {
             <div className="text-sm text-slate-500 italic">Showing {txs.length} Transactions</div>
           </div>
 
-          <TransactionsTable transactions={txs} deleteFn={deleteTxn} updateFn={updateTxn} />
+          <TransactionsTable
+            transactions={txs}
+            deleteFn={deleteTxn}
+            updateFn={updateTxn}
+            labels={allLabels}
+            categories={allCategories}
+            accounts={allAccounts}
+          />
         </div>
         <TransactionsFilterBar setFilterQuery={applyFilter} accounts={allAccounts} categories={allCategories} labels={allLabels} />
       </div>
