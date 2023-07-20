@@ -4,13 +4,13 @@ import { GeneralTimestamedEntity, IdEntity, RecurringEntity } from './base';
 export type Budget = {
   title: string;
   categories: number[];
-  labels: string[];
+  labels: number[];
   amount: Amount;
-  notes?: string;
+  note?: string;
   isRecurring: boolean;
 } & StrictRange<Date> & IdEntity & GeneralTimestamedEntity;
 
-export type ComputedBudget = Budget & {
+export type CalculatedBudget = Budget & {
   spent: number;
 };
 
