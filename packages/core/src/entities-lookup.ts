@@ -7,13 +7,3 @@ export enum Entities {
   RecurringTransaction,
   RecurringBudget,
 }
-
-export const EntitesArray: Entities[] = [
-  Entities.Account,
-  Entities.Budget,
-  Entities.Category,
-  Entities.Label,
-  Entities.Transaction,
-  Entities.RecurringTransaction,
-  Entities.RecurringBudget,
-];
