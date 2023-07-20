@@ -37,7 +37,7 @@ const Labels = () => {
       {/* Label cards */}
       <div className="grid grid-cols-12 gap-2">
         {labels.map((label) => (
-          <div className="col-span-3 p-1" key={label.id}>
+          <div className="col-span-4 p-1" key={label.id}>
             <LabelCard label={label} updateLabelFn={updateLabel} deleteLabelFn={deleteLabel} />
           </div>
         ))}

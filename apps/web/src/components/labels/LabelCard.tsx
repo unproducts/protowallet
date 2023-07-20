@@ -4,6 +4,10 @@ import { Label } from '../../types';
 import EditIcon from '../../icons/EditIcon';
 import DeleteIcon from '../../icons/DeleteIcon';
 import NewUpdateLabelAction from './NewUpdateLabelAction';
+import TransactionsStandaloneBlotterAction from '../transactions/TransactionsStandaloneBlotterAction';
+import { FindTransactionsOptions } from '@protowallet/core/dist/repositories';
+import { config } from '@protowallet/common';
+import TransactionIcon from '../../icons/TransactionIcon';
 
 export type LabelCardProps = {
   label: Label;
@@ -12,6 +16,13 @@ export type LabelCardProps = {
 };
 
 const LabelCard = (props: LabelCardProps) => {
+  const transactionsQuery: FindTransactionsOptions = {
+    dateRange: {
+      from: config.DATE_OF_INCEPTION,
+      to: new Date(),
+    },
+    labels: [props.label.id],
+  };
   return (
     <>
       <div className="flex justify-between border rounded-md px-4 py-2">
@@ -20,12 +31,18 @@ const LabelCard = (props: LabelCardProps) => {
           {props.label.value}
         </span>
         <span className="flex items-center justify-around">
+          <TransactionsStandaloneBlotterAction
+            transactionQuery={transactionsQuery}
+            buttonClassName="text-slate-400 hover:text-slate-500 rounded-lg border p-2 mr-1"
+          >
+            <TransactionIcon className="w-5 h-5" />
+          </TransactionsStandaloneBlotterAction>
           <NewUpdateLabelAction
             buttonClassName={'text-slate-400 hover:text-slate-500 rounded-lg border p-2 mr-1'}
             label={props.label}
             updateLabelFn={props.updateLabelFn}
           >
-            <EditIcon className='w-5 h-5'/>
+            <EditIcon className="w-5 h-5" />
           </NewUpdateLabelAction>
           <button
             className="text-red-400 hover:text-red-500 border rounded-lg p-2"
