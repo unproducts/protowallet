@@ -31,9 +31,9 @@ export class RecurringTransactionRepository extends AbstractRepositoryAdapter<Re
   }
 
   async query(options: FindRecurringTransactionsOptions): Promise<RecurringTransaction[]> {
-    const query: Record<string, any> = this.prepareQueryFromOptions(options);
-    const RecurringTransactions: RecurringTransaction[] = this.feed.find(query).map(this.entityLoadHook);
-    return RecurringTransactions;
+    const matcher = this.prepareTxMatcherFnFromOptions(options);
+    const recurringTransactions: RecurringTransaction[] = this.feed.chain().find().where(matcher).data().map(this.entityLoadHook);
+    return recurringTransactions;
   }
 
   async update(options: UpdateRecurringTransactionOptions): Promise<RecurringTransaction> {
@@ -92,6 +92,19 @@ export class RecurringTransactionRepository extends AbstractRepositoryAdapter<Re
     }
   }
 
+  private prepareTxMatcherFnFromOptions(options: FindRecurringTransactionsOptions) {
+    return (txRaw: RecurringTransaction) => {
+      const tx = this.entityLoadHook(txRaw);
+      console.log(tx);
+      const case1 = !options.accounts || options.accounts.includes(tx.accountId);
+      const case2 = !options.categories || options.categories.includes(tx.category);
+      const case3 = !options.labels || options.labels.some((label) => tx.labels.includes(label));
+      const case4 = !options.recordTypes || options.recordTypes.includes(tx.type);
+      return case1 && case2 && case3 && case4;
+    };
+  }
+
+  // @ts-ignore keeping this for future reference
   private prepareQueryFromOptions(options: FindRecurringTransactionsOptions) {
     const query: Record<string, any> = {};
 
