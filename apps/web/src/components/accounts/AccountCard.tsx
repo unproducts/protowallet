@@ -1,12 +1,15 @@
 import React from 'react';
 import AccountIcon from '../../icons/AccountIcon';
 import { formatAmount } from '../../utils/Utils';
-import { UpdateAccountOptions } from '@protowallet/core/dist/repositories';
+import { FindTransactionsOptions, UpdateAccountOptions } from '@protowallet/core/dist/repositories';
 import { CalculatedAccount } from '@protowallet/types';
 import { Currency, RecordDirection } from '@protowallet/lookups';
 import EditIcon from '../../icons/EditIcon';
 import DeleteIcon from '../../icons/DeleteIcon';
 import NewUpdateAccountAction from './NewUpdateAccountAction';
+import TransactionsStandaloneBlotterAction from '../transactions/TransactionsStandaloneBlotterAction';
+import { config } from '@protowallet/common';
+import TransactionIcon from '../../icons/TransactionIcon';
 
 export type AccountCardProps = {
   account: CalculatedAccount;
@@ -17,6 +20,15 @@ export type AccountCardProps = {
 
 const AccountCard = (props: AccountCardProps) => {
   const accent = props.account.accent;
+
+  const blotterQuery: FindTransactionsOptions = {
+    dateRange: {
+      from: config.DATE_OF_INCEPTION,
+      to: new Date(),
+    },
+    accounts: [props.account.id],
+  };
+  
   return (
     <div className={`border border-accent-${accent}-300 bg-accent-${accent}-100 rounded-md p-2 text-accent-${accent}-300`}>
       <div className="flex items-center justify-between h5 font-bold">
@@ -25,6 +37,12 @@ const AccountCard = (props: AccountCardProps) => {
           {props.account.name}
         </span>
         <div className="flex items-center">
+          <TransactionsStandaloneBlotterAction
+            buttonClassName={`text-accent-${accent}-200 hover:text-accent-${accent}-300 mr-2`}
+            transactionQuery={blotterQuery}
+          >
+            <TransactionIcon className="w-5 h-5" />
+          </TransactionsStandaloneBlotterAction>
           <NewUpdateAccountAction
             buttonClassName={`text-accent-${accent}-200 hover:text-accent-${accent}-300`}
             account={props.account}
