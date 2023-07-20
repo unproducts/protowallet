@@ -169,6 +169,7 @@ export default function TransactionForm(props: TransactionFormProps) {
           id="note"
           className="form-textarea w-full px-2 py-1"
           rows={4}
+          value={note}
           onChange={(e) => {
             setNote(e.target.value);
           }}
