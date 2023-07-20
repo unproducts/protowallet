@@ -2,6 +2,7 @@ import { Entities } from './entities-lookup';
 import { Repository } from './repositories/base';
 import { ApplicationFeed } from './feeds';
 import { AccountRepository, CategoryRepository, LabelRepository, RecurringTransactionRepository, TransactionRepository } from './repositories';
+import { BudgetRepository } from './repositories/budget';
 
 export type RepositoryProvider = (entity: Entities) => Repository<any>;
 export type RepositoryProviderMaker = (applicationFeed: ApplicationFeed) => RepositoryProvider;
@@ -13,6 +14,9 @@ export const makeProvider: RepositoryProviderMaker = (applicationFeed: Applicati
       switch (entity) {
         case Entities.Account:
           repositoryCache.set(entity, new AccountRepository(applicationFeed.accounts));
+          break;
+        case Entities.Budget:
+          repositoryCache.set(entity, new BudgetRepository(applicationFeed.budgets));
           break;
         case Entities.Category:
           repositoryCache.set(entity, new CategoryRepository(applicationFeed.categories));
