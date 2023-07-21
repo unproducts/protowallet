@@ -14,8 +14,8 @@ import TransactionIcon from '../../icons/TransactionIcon';
 export type AccountCardProps = {
   account: CalculatedAccount;
   currency: Currency;
-  updateAccountFn: (options: UpdateAccountOptions) => void;
-  deleteAccountFn: (id: number) => void;
+  updateAccountFn?: (options: UpdateAccountOptions) => void;
+  deleteAccountFn?: (id: number) => void;
 };
 
 const AccountCard = (props: AccountCardProps) => {
@@ -43,22 +43,22 @@ const AccountCard = (props: AccountCardProps) => {
           >
             <TransactionIcon className="w-5 h-5" />
           </TransactionsStandaloneBlotterAction>
-          <NewUpdateAccountAction
+          {props.updateAccountFn && <NewUpdateAccountAction
             buttonClassName={`text-accent-${accent}-200 hover:text-accent-${accent}-300`}
             account={props.account}
             updateAccountFn={props.updateAccountFn}
           >
             <EditIcon className="w-5 h-5" />
-          </NewUpdateAccountAction>
-          <button
+          </NewUpdateAccountAction>}
+          {props.deleteAccountFn && <button
             className={`text-accent-${accent}-200 hover:text-accent-${accent}-300 ml-2`}
             onClick={(e) => {
               e.preventDefault();
-              props.deleteAccountFn(props.account.id);
+              props.deleteAccountFn && props.deleteAccountFn(props.account.id);
             }}
           >
             <DeleteIcon className="w-5 h-5" />
-          </button>
+          </button>}
         </div>
       </div>
       <div className="text-xl font-bold">
