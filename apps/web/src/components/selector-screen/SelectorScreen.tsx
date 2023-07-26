@@ -22,10 +22,11 @@ function SelectorScreen(props: SelectorScreenProps) {
     <div className="min-h-screen h-full flex flex-col after:flex-1">
       <div className="mb-6">
         {/* Header */}
-        <div className="flex items-center justify-start text-black text-xl font-bold h-16 px-4 mb-8 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-start text-black text-xl font-bold h-16 px-4 mb-8 sm:px-6 lg:px-8 space-x-3">
           {/* Logo */}
           <img className="h-8 mr-2 w-auto" src={ProtoLogo} alt="Workflow" />
           Protowallet
+          <span className='bg-red-500 font-bold text-xs text-white p-0.5 rounded'>Beta</span>
         </div>
         <DBSelector dbNames={dbNames} setSelectedDB={props.dbSelected} deleteDB={deleteDb} />
       </div>

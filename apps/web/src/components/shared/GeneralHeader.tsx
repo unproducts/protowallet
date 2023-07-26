@@ -14,9 +14,10 @@ function Header(props: HeaderProps) {
       <div className="px-3">
         <div className="flex items-center justify-between h-16 w-full">
           {/* Header: Left side */}
-          <div className="flex items-center text-2xl font-bold text-black font-poppins">
+          <div className="flex items-center text-2xl font-bold text-black font-poppins space-x-3">
             <img className="h-10 w-auto mr-3" src={ProtoLogo} alt="Workflow" />
             Protowallet
+            <span className='bg-red-500 font-bold text-xs text-white p-0.5 rounded'>Beta</span>
           </div>
           <div className="flex items-center space-x-3">
             <div className="text-sm text-slate-500 font-poppins">{props.dbName}</div>
