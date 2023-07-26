@@ -26,6 +26,7 @@ function RecurringTransactionsTable(props: RecurringTransactionsTableProps) {
           {/* Table header */}
           <thead className="text-xs font-semibold uppercase text-slate-500 border-t border-b border-slate-200">
             <tr>
+              <th/>
               <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                 <div className="font-semibold text-left">Title</div>
               </th>
@@ -34,9 +35,6 @@ function RecurringTransactionsTable(props: RecurringTransactionsTableProps) {
               </th>
               <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                 <div className="font-semibold text-left">Amount</div>
-              </th>
-              <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                <div className="font-semibold text-left">Category</div>
               </th>
               <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                 <div className="font-semibold text-left">Start Date</div>
