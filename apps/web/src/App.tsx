@@ -17,6 +17,7 @@ import SingleMessageComponent from './components/general/SingleMessageComponent'
 import { ApplicationMode } from '@protowallet/types';
 import SelectorScreen from './components/selector-screen/SelectorScreen';
 import Transactions from './components/transactions/Transactions';
+import HomePage from './components/home/Home';
 
 function App() {
   const location = useLocation();
@@ -59,7 +60,7 @@ function App() {
         <ProtoContext.Provider value={proto}>
           <GeneralLayout derefProto={derefProto} dbName={dbName}>
             <Routes>
-              <Route path="/home" element={ComingSoonPage} />
+              <Route path="/home" element={<HomePage/>} />
               <Route path='/analytics' element={ComingSoonPage} />
               <Route path='/budgets' element={ComingSoonPage} />
               <Route path="/accounts" element={<Accounts />} />
