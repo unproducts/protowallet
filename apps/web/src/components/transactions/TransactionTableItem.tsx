@@ -6,6 +6,7 @@ import { formatAmount, formatDate } from '../../utils/Utils';
 import EditIcon from '../../icons/EditIcon';
 import DeleteIcon from '../../icons/DeleteIcon';
 import NewUpdateTransactionAction from './NewUpdateTransactionAction';
+import RecurringTransactionIcon from '../../icons/RecurringTransactionIcon';
 
 export type TransactionsTableItemProps = {
   transaction: Transaction;
@@ -42,27 +43,34 @@ function TransactionsTableItem(props: TransactionsTableItemProps) {
   return (
     <tr>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-1/12">
-        <span className="flex items-center">
-          <NewUpdateTransactionAction
-            buttonClassName={'text-slate-400 hover:text-slate-500 rounded-lg border p-2 mr-1'}
-            transaction={props.transaction}
-            updateFn={props.updateFn}
-            labels={props.labels}
-            categories={props.categories}
-            accounts={props.accounts}
-          >
-            <EditIcon className="w-5 h-5" />
-          </NewUpdateTransactionAction>
-          <button
-            className="text-red-400 hover:text-red-500 border rounded-lg p-2"
-            onClick={(e) => {
-              e.preventDefault();
-              props.deleteFn(props.transaction);
-            }}
-          >
-            <DeleteIcon className="w-5 h-5" />
-          </button>
-        </span>
+        {!transaction.isRecurringTransaction && (
+          <span className="flex items-center">
+            <NewUpdateTransactionAction
+              buttonClassName={'text-slate-400 hover:text-slate-500 rounded-lg border p-2 mr-1'}
+              transaction={props.transaction}
+              updateFn={props.updateFn}
+              labels={props.labels}
+              categories={props.categories}
+              accounts={props.accounts}
+            >
+              <EditIcon className="w-5 h-5" />
+            </NewUpdateTransactionAction>
+            <button
+              className="text-red-400 hover:text-red-500 border rounded-lg p-2"
+              onClick={(e) => {
+                e.preventDefault();
+                props.deleteFn(props.transaction);
+              }}
+            >
+              <DeleteIcon className="w-5 h-5" />
+            </button>
+          </span>
+        )}
+        {transaction.isRecurringTransaction && (
+          <span className="flex items-center justify-center">
+            <RecurringTransactionIcon className="w-5 h-5" />
+          </span>
+        )}
       </td>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
         <div className="text-left">{transaction.title}</div>
