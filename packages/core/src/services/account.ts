@@ -24,9 +24,12 @@ export class AccountsService {
     this.transactionsGroupingService = transactionsGroupingService;
   }
 
-  async getAllComputedAccounts(): Promise<CalculatedAccount[]> {
-    const accounts = await this.accountRepository.getAll();
-    const allAccountsRecord = await this.accountRepository.getAllRecord();
+  async getAllComputedAccounts(limit: number = 0): Promise<CalculatedAccount[]> {
+    let accounts = this.accountRepository.getAll();
+    if (limit) {
+      accounts = accounts.slice(0, limit);
+    }
+    const allAccountsRecord = this.accountRepository.getAllRecord();
     const accountsLifespan = this.getAccountLifespan();
     const accountIds = accounts.map((account) => account.id);
     const transactions = await this.transactionsManager.query({
@@ -42,7 +45,7 @@ export class AccountsService {
   }
 
   async getComputedAccount(accountId: number): Promise<CalculatedAccount> {
-    const account = await this.accountRepository.getOrThrow(accountId);
+    const account = this.accountRepository.getOrThrow(accountId);
     const accountLifespan = this.getAccountLifespan();
     const transactions = await this.transactionsManager.query({
       dateRange: accountLifespan,
