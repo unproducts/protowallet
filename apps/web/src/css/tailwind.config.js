@@ -48,6 +48,8 @@ module.exports = {
         3: '3px',
       },
       colors: {
+        'logoBlue': '#00ffff',
+        'logoPink': '#ff00ff',
         primary: {
           50: '#f2f2f2',
           100: '#e6e6e6',
