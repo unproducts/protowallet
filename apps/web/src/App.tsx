@@ -49,31 +49,34 @@ function App() {
     }
   }, [location.pathname]); // triggered on route change
 
-  const ComingSoonPage = <SingleMessageComponent title='🚧' description='Coming Soon'/>;
+  const ComingSoonPage = <SingleMessageComponent title="🚧" description="Coming Soon" />;
 
   return (
     <>
-      {!proto && (
-        <SelectorScreen dbSelected={createProto}/>
-      )}
-      {proto && (
-        <ProtoContext.Provider value={proto}>
-          <GeneralLayout derefProto={derefProto} dbName={dbName}>
-            <Routes>
-              <Route path="/home" element={<HomePage/>} />
-              <Route path='/analytics' element={ComingSoonPage} />
-              <Route path='/budgets' element={ComingSoonPage} />
-              <Route path="/accounts" element={<Accounts />} />
-              <Route path="/labels" element={<Labels />} />
-              <Route path="/categories" element={<Categories />} />
-              <Route path="/recurring-transactions" element={<RecurringTransactions />} />
-              <Route path="/transactions" element={<Transactions/>} />
-              <Route path="/triggers" element={ComingSoonPage} />
-              <Route path="/settings" element={ComingSoonPage} />
-            </Routes>
-          </GeneralLayout>
-        </ProtoContext.Provider>
-      )}
+      <div className='block lg:hidden'>
+        <SingleMessageComponent title="🚧" description="This app is not yet optimized for mobile. Please use a desktop browser." />
+      </div>
+      <div className='hidden lg:block'>
+        {!proto && <SelectorScreen dbSelected={createProto} />}
+        {proto && (
+          <ProtoContext.Provider value={proto}>
+            <GeneralLayout derefProto={derefProto} dbName={dbName}>
+              <Routes>
+                <Route path="/home" element={<HomePage />} />
+                <Route path="/analytics" element={ComingSoonPage} />
+                <Route path="/budgets" element={ComingSoonPage} />
+                <Route path="/accounts" element={<Accounts />} />
+                <Route path="/labels" element={<Labels />} />
+                <Route path="/categories" element={<Categories />} />
+                <Route path="/recurring-transactions" element={<RecurringTransactions />} />
+                <Route path="/transactions" element={<Transactions />} />
+                <Route path="/triggers" element={ComingSoonPage} />
+                <Route path="/settings" element={ComingSoonPage} />
+              </Routes>
+            </GeneralLayout>
+          </ProtoContext.Provider>
+        )}
+      </div>
     </>
   );
 }

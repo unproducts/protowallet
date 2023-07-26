@@ -22,10 +22,10 @@ const HomePage = () => {
       <AccountsStrip accounts={calculatedAccounts} currency={Currency.INR} />
       <div className="w-full max-w-9xl mx-auto">
         {/* Page header */}
-        <div className="sm:flex sm:justify-between sm:items-center mb-8">{/* Datepicker built with flatpickr */}</div>
+        <div className="sm:flex sm:justify-between sm:items-center mb-6">{/* Datepicker built with flatpickr */}</div>
 
         {/* Cards */}
-        <div className="grid grid-cols-12 gap-6 p-2">
+        <div className="flex items-center justify-center w-full px-2">
           {/* Line chart (Analytics) */}
           <IncomeExpenseTimeSeriesAnalysis />
         </div>
