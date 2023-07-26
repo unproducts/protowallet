@@ -95,7 +95,6 @@ export class RecurringTransactionRepository extends AbstractRepositoryAdapter<Re
   private prepareTxMatcherFnFromOptions(options: FindRecurringTransactionsOptions) {
     return (txRaw: RecurringTransaction) => {
       const tx = this.entityLoadHook(txRaw);
-      console.log(tx);
       const case1 = !options.accounts || options.accounts.includes(tx.accountId);
       const case2 = !options.categories || options.categories.includes(tx.category);
       const case3 = !options.labels || options.labels.some((label) => tx.labels.includes(label));

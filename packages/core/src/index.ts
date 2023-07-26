@@ -13,6 +13,7 @@ import {
 import { DataPrepopulatorService } from './services/data-prepopulator';
 import { ApplicationMode } from '@protowallet/types';
 import { PersistenceService } from './services/persistence';
+import { AnalyticsService } from './services/analytics';
 
 export type ProtowalletOptions = {
   dbName: string;
@@ -32,6 +33,8 @@ export class Protowallet {
 
   private dataPrepopulatorService: DataPrepopulatorService | null = null;
   private persistenceService: PersistenceService | null = null;
+
+  private analyticsService: AnalyticsService | null = null;
 
   private accountsService: AccountsService | null = null;
 
@@ -61,6 +64,16 @@ export class Protowallet {
       this.dataPrepopulatorService = new DataPrepopulatorService(this.repositoryProvider);
     }
     return this.dataPrepopulatorService;
+  }
+
+  getAnalyticsService() {
+    if (this.analyticsService === null) {
+      this.analyticsService = new AnalyticsService(
+        this.getTransactionsManager(),
+        this.getTransactionAggregatorService(),
+      );
+    }
+    return this.analyticsService;
   }
 
   getAccountsService() {

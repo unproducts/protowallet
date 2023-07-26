@@ -1,9 +1,27 @@
-import { Account, Amount, Category, GeneralTimestamedEntity, IdEntity, Label, RecurringTransaction, Transaction } from '@protowallet/types';
+import {
+  Account,
+  Amount,
+  Category,
+  GeneralTimestamedEntity,
+  IdEntity,
+  Label,
+  RecurringTransaction,
+  Transaction,
+} from '@protowallet/types';
 import { Entities } from '../entities-lookup';
-import { AccountRepository, CategoryRepository, FindTransactionsOptions, LabelRepository, RecurringTransactionRepository, Repository, TransactionRepository } from '../repositories';
+import {
+  AccountRepository,
+  CategoryRepository,
+  FindTransactionsOptions,
+  LabelRepository,
+  RecurringTransactionRepository,
+  Repository,
+  TransactionRepository,
+} from '../repositories';
 import { RepositoryProvider } from '../repository-provider';
 import { Currency, RecordDirection } from '@protowallet/lookups';
 import { RecurringEntityFlattener, RecurringEntityToFlatMapper } from './recurring-entity';
+import { klass } from '@protowallet/common';
 
 export class TransactionsManager {
   private transactionRepository: TransactionRepository;
@@ -74,7 +92,39 @@ export class TransactionAggregationsService {
     }
   }
 
-  async aggregateTransactionsGroupAmount(transactionsMap: Map<number, Transaction[]>, initialAmountFn?: (t: number) => number): Promise<Map<number, Amount>> {
+  async aggregateTransactionsPerDay(dates: klass.TimelessDate[], transactions: Transaction[]): Promise<Map<klass.TimelessDate, Transaction[]>> {
+    const timelessDateRegister: Map<string, klass.TimelessDate> = new Map();
+    dates.forEach((d) => timelessDateRegister.set(d.toString(), d));
+
+    const finalMap: Map<klass.TimelessDate, Transaction[]> = new Map();
+    dates.forEach((d) => finalMap.set(d, []));
+
+    for (let index = 0; index < transactions.length; index++) {
+      const transaction = transactions[index];
+      const key = (new klass.TimelessDate(transaction.createdAt)).toString();
+      const providedTimelessDate = timelessDateRegister.get(key) as klass.TimelessDate;
+      const registry = finalMap.get(providedTimelessDate) as Transaction[];
+      registry.push(transaction);
+    }
+
+    return finalMap;
+  }
+
+  async aggregateTransactionAmountPerDay(dates: klass.TimelessDate[], transactions: Transaction[]): Promise<Map<klass.TimelessDate, Amount>> {
+    const transactionsPerDay = await this.aggregateTransactionsPerDay(dates, transactions);
+    const data: Map<klass.TimelessDate, Amount> = new Map();
+    for (let key of transactionsPerDay.keys()) {
+      const transactions = transactionsPerDay.get(key) as Transaction[];
+      const aggregatedAmount = await this.aggregateTransactionsAmount(transactions);
+      data.set(key, aggregatedAmount);
+    }
+    return data;
+  }
+
+  async aggregateTransactionsGroupAmount(
+    transactionsMap: Map<number, Transaction[]>,
+    initialAmountFn?: (t: number) => number,
+  ): Promise<Map<number, Amount>> {
     const data: Map<number, Amount> = new Map();
     for (let key of transactionsMap.keys()) {
       const transactions = transactionsMap.get(key) as Transaction[];
@@ -110,9 +160,13 @@ export class TransactionsGroupingService {
     return this._groupTransactions<Account>(transactions, this.accountRepository, 'accountId');
   }
 
-  protected async _groupTransactions<T extends IdEntity & GeneralTimestamedEntity>(transactions: Transaction[], repository: Repository<T>, idLookupKey: keyof Transaction): Promise<Map<number, Transaction[]>> {
+  protected async _groupTransactions<T extends IdEntity & GeneralTimestamedEntity>(
+    transactions: Transaction[],
+    repository: Repository<T>,
+    idLookupKey: keyof Transaction,
+  ): Promise<Map<number, Transaction[]>> {
     const grouping: Map<number, Transaction[]> = new Map();
-    const data: Record<number, T> = await repository.getAllRecord();
+    const data: Record<number, T> = repository.getAllRecord();
 
     for (let index = 0; index < transactions.length; index++) {
       const transaction = transactions[index];
