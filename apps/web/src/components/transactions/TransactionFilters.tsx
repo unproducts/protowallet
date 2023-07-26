@@ -17,17 +17,18 @@ export type TransactionsFilterBarOptions = {
 };
 
 function TransactionsFilterBar(options: TransactionsFilterBarOptions) {
-  const [dateSelectedType, setDateSelectedType] = useState<DateSelectedType>('Last 7 Days');
+  const [dateSelectedType, setDateSelectedType] = useState<DateSelectedType>('Last 12 Months');
 
   // Filters
   const [selectedAccounts, setSelectedAccounts] = useState<Account[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
   const [selectedLabels, setSelectedLabels] = useState<Label[]>([]);
   const [selectedRecordType, setSelectedRecordType] = useState<RecordType[]>([]);
-  const [selectedStartDate, setSelectedStartDate] = useState<Date>(new Date(new Date().getTime() - 6 * 24 * 60 * 60 * 1000));
-  const [selectedEndDate, setSelectedEndDate] = useState<Date>(new Date());
+  const [selectedStartDate, setSelectedStartDate] = useState<Date>();
+  const [selectedEndDate, setSelectedEndDate] = useState<Date>();
 
   useEffect(() => {
+    if (!selectedStartDate || !selectedEndDate) return;
     const filterQuery: FindTransactionsOptions = {
       dateRange: {
         from: selectedStartDate,
@@ -144,7 +145,7 @@ function TransactionsFilterBar(options: TransactionsFilterBarOptions) {
         {/* Date*/}
         <div>
           <div className="text-sm text-slate-800 font-medium">Date</div>
-          <DateSelect onChange={setDateSelectedType}></DateSelect>
+          <DateSelect onChange={setDateSelectedType} initialSelected={3}></DateSelect>
           <br />
           {dateSelectedType === 'Custom' ? (
             <div>

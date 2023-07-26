@@ -27,7 +27,7 @@ function IncomeExpenseTimeSeriesAnalysis() {
   const defaultDate = new Date();
   defaultDate.setFullYear(defaultDate.getFullYear() - 1);
 
-  const [dateSelectedType, setDateSelectedType] = useState('');
+  const [dateSelectedType, setDateSelectedType] = useState('Last Month');
   const [selectedStartDate, setSelectedStartDate] = useState<Date>(defaultDate);
   const [selectedEndDate, setSelectedEndDate] = useState<Date>(new Date());
 
@@ -79,7 +79,7 @@ function IncomeExpenseTimeSeriesAnalysis() {
         <h2 className="font-semibold text-slate-800">Cashflows</h2>
         <div className="flex space-x-2 items-center justify-end w-full">
           {/* <div className="text-sm text-slate-800 font-medium">Date</div> */}
-          <DateSelect onChange={setDateSelectedType}></DateSelect>
+          <DateSelect onChange={setDateSelectedType} initialSelected={2}></DateSelect>
           {dateSelectedType === 'Custom' ? (
             <div>
               {/* <div className="text-sm text-slate-800 font-medium">Custom Date</div> */}

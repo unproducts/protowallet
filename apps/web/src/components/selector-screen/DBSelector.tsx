@@ -1,5 +1,6 @@
 import React from 'react';
 import DeleteIcon from '../../icons/DeleteIcon';
+import { Link } from 'react-router-dom';
 
 export type DBSelectorProps = {
   dbNames: string[];
@@ -92,9 +93,9 @@ const DBSelector = (props: DBSelectorProps) => {
             </label>
           </div>
           <div className="flex items-center justify-between">
-            <button className="btn bg-primary-500 hover:bg-primary-600 text-white ml-auto hover:shadow" onClick={submit}>
+            <Link to='/home' className="btn bg-primary-500 hover:bg-primary-600 text-white ml-auto hover:shadow" onClick={submit}>
               Launch App
-            </button>
+            </Link>
           </div>
         </form>
       </div>

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { ComputedBudget } from '../../types';
-import { enums } from '@wallet/core';
 import BudgetCard from './BudgetCard';
 import BudgetSidebar from './BudgetSidebar';
+import { Currency } from '@protowallet/lookups';
 
 // import NewAccountModal from '../../partials/wallet/NewAccountModal';
 
@@ -15,7 +15,7 @@ function Budgets() {
       labels: [],
       amount: 100,
       spent: 33,
-      currency: enums.Currency.USD,
+      currency: Currency.INR,
       startDate: new Date(),
       endDate: new Date(),
       isRecurring: false,

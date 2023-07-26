@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Transition from '../../utils/Transition';
 
-function DateSelect({onChange}) {
+function DateSelect({onChange, initialSelected = 1}) {
 
   const options = [
     {
@@ -27,7 +27,7 @@ function DateSelect({onChange}) {
   ];
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [selected, setSelected] = useState(1);
+  const [selected, setSelected] = useState(initialSelected);
 
   const trigger = useRef<any>(null);
   const dropdown = useRef<any>(null);
