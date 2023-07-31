@@ -1,4 +1,4 @@
-import { RecordType } from '@protowallet/lookups';
+import { Currency, RecordType } from '@protowallet/lookups';
 import { GeneralTimestamedEntity, IdEntity, RecurringEntity } from './base';
 import { Amount } from './general';
 
@@ -22,3 +22,10 @@ export type RecurringTransaction = {
   amount: Amount;
   labels: number[];
 } & RecurringEntity & IdEntity & GeneralTimestamedEntity;
+
+export type TransferTransaction = Omit<Transaction, 'accountId' | 'type' | 'amount'> & {
+  fromAccountId: number;
+  toAccountId: number;
+  amountRaw: number;
+  currency: Currency;
+}

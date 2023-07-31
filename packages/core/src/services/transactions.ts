@@ -12,6 +12,7 @@ import { Entities } from '../entities-lookup';
 import {
   AccountRepository,
   CategoryRepository,
+  CreateTransactionOptions,
   FindTransactionsOptions,
   LabelRepository,
   RecurringTransactionRepository,
@@ -19,9 +20,17 @@ import {
   TransactionRepository,
 } from '../repositories';
 import { RepositoryProvider } from '../repository-provider';
-import { Currency, RecordDirection } from '@protowallet/lookups';
+import { Currency, RecordDirection, RecordType } from '@protowallet/lookups';
 import { RecurringEntityFlattener, RecurringEntityToFlatMapper } from './recurring-entity';
 import { klass } from '@protowallet/common';
+
+
+export type CreateTransferTxnOption = Omit<CreateTransactionOptions, 'accountId' | 'type' | 'amount'> & {
+  fromAccountId: number;
+  toAccountId: number;
+  amountRaw: number;
+  currency: Currency;
+};
 
 export class TransactionsManager {
   private transactionRepository: TransactionRepository;
@@ -59,6 +68,31 @@ export class TransactionsManager {
     const allTransactions = [...transactions, ...flattenedRecurringTransactions];
     allTransactions.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
     return allTransactions;
+  }
+
+  populateTransferTransaction(transaction: CreateTransferTxnOption): [CreateTransactionOptions, CreateTransactionOptions] {
+    return [
+      {
+        accountId: transaction.fromAccountId,
+        type: RecordType.Transfer,
+        amount: {
+          value: transaction.amountRaw,
+          currency: transaction.currency,
+          direction: RecordDirection.Left,
+        },
+        ...transaction,
+      },
+      {
+        accountId: transaction.toAccountId,
+        type: RecordType.Transfer,
+        amount: {
+          value: transaction.amountRaw,
+          currency: transaction.currency,
+          direction: RecordDirection.Right,
+        },
+        ...transaction,
+      },
+    ];
   }
 }
 
@@ -101,7 +135,7 @@ export class TransactionAggregationsService {
 
     for (let index = 0; index < transactions.length; index++) {
       const transaction = transactions[index];
-      const key = (new klass.TimelessDate(transaction.createdAt)).toString();
+      const key = new klass.TimelessDate(transaction.createdAt).toString();
       const providedTimelessDate = timelessDateRegister.get(key) as klass.TimelessDate;
       const registry = finalMap.get(providedTimelessDate) as Transaction[];
       registry.push(transaction);

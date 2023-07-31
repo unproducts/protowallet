@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import TransactionsTable from './TransactionTable';
 import TransactionsFilterBar from './TransactionFilters';
 import SinglePageHeader from '../shared/SinglePageHeader';
-import { Transaction } from '@protowallet/types';
+import { Transaction, TransferTransaction } from '@protowallet/types';
 import { useProto } from '../../hooks/use-proto';
 import { EntitiesEnum } from '@protowallet/core';
 import {
@@ -16,6 +16,7 @@ import {
   UpdateTransactionOptions,
 } from '@protowallet/core/dist/repositories';
 import { NewTransactionButton, NewUpdateTransactionActionProps } from './NewUpdateTransactionAction';
+import { CreateTransferTxnOption } from '@protowallet/core/dist/services';
 
 function Transactions() {
   const proto = useProto();
@@ -48,6 +49,12 @@ function Transactions() {
     });
   };
 
+  const createTransferTxn = (transferTxn: CreateTransferTxnOption) => {
+    const [fromTxn, toTxn] = transactionsManger.populateTransferTransaction(transferTxn);
+    createTxn(fromTxn);
+    createTxn(toTxn);
+  }
+
   const updateTxn = (options: UpdateTransactionOptions) => {
     transactionsRepo.update(options).then((updatedTx) => {
       setTxs(txs.map((t) => (t.id === updatedTx.id ? updatedTx : t)));
@@ -66,6 +73,7 @@ function Transactions() {
     labels: allLabels,
     createFn: createTxn,
     updateFn: updateTxn,
+    transferFn: createTransferTxn,
   };
 
   return (
