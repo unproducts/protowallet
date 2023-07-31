@@ -37,6 +37,7 @@ function IncomeExpenseTimeSeriesAnalysis() {
   const [netExpense, setNetExpense] = useState(0);
 
   const proto = useProto();
+  const prefs = proto.getPrefsProviderService();
   const analyticsService = proto.getAnalyticsService();
 
   useEffect(() => {
@@ -94,7 +95,7 @@ function IncomeExpenseTimeSeriesAnalysis() {
           <div className="flex items-center py-2">
             <div className="mr-5">
               <div className="flex items-center">
-                <div className="text-3xl font-bold text-red-500 mr-2">{formatAmount(netExpense, Currency.INR)}</div>
+                <div className="text-3xl font-bold text-red-500 mr-2">{formatAmount(netExpense, prefs.getPreferredCurrency())}</div>
               </div>
               <div className="text-sm text-slate-500">Total Spendings</div>
             </div>
@@ -104,7 +105,7 @@ function IncomeExpenseTimeSeriesAnalysis() {
           <div className="flex items-center py-2">
             <div className="mr-5">
               <div className="flex items-center">
-                <div className="text-3xl font-bold text-green-500 mr-2">{formatAmount(netIncome, Currency.INR)}</div>
+                <div className="text-3xl font-bold text-green-500 mr-2">{formatAmount(netIncome, prefs.getPreferredCurrency())}</div>
               </div>
               <div className="text-sm text-slate-500">Total Income</div>
             </div>

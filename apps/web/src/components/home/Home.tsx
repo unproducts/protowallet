@@ -8,6 +8,7 @@ import IncomeExpenseTimeSeriesAnalysis from '../analytics/cards/IncomeExpenseTim
 
 const HomePage = () => {
   const proto = useProto();
+  const prefs = proto.getPrefsProviderService();
   const accountsService: AccountsService = proto.getAccountsService();
   const [calculatedAccounts, setCalculatedAccounts] = useState<CalculatedAccount[]>([]);
 
@@ -19,7 +20,7 @@ const HomePage = () => {
 
   return (
     <section className="mx-2 mt-6 w-full">
-      <AccountsStrip accounts={calculatedAccounts} currency={Currency.INR} />
+      <AccountsStrip accounts={calculatedAccounts} currency={prefs.getPreferredCurrency()} />
       <div className="w-full max-w-9xl mx-auto">
         {/* Page header */}
         <div className="sm:flex sm:justify-between sm:items-center mb-6">{/* Datepicker built with flatpickr */}</div>

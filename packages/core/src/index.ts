@@ -1,7 +1,7 @@
 import loki from 'lokijs';
 
 import { Entities } from './entities-lookup';
-import { ApplicationFeed, getFeed, initializeFeed } from './feeds';
+import { ApplicationFeed, getFeed } from './feeds';
 import { RepositoryProvider, makeProvider } from './repository-provider';
 import {
   AccountsService,
@@ -14,6 +14,8 @@ import { DataPrepopulatorService } from './services/data-prepopulator';
 import { ApplicationMode } from '@protowallet/types';
 import { PersistenceService } from './services/persistence';
 import { AnalyticsService } from './services/analytics';
+import { PrefsProvider } from './services/prefs-manager';
+import { applyMigrations } from './migrations/engine';
 
 export type ProtowalletOptions = {
   dbName: string;
@@ -33,6 +35,7 @@ export class Protowallet {
 
   private dataPrepopulatorService: DataPrepopulatorService | null = null;
   private persistenceService: PersistenceService | null = null;
+  private prefsProviderService: PrefsProvider | null = null;
 
   private analyticsService: AnalyticsService | null = null;
 
@@ -50,9 +53,10 @@ export class Protowallet {
     this.lokiDb = lokiDb;
 
     this.applicationFeed = getFeed(this.lokiDb);
-    this.repositoryProvider = makeProvider(this.applicationFeed);
 
     isNewDatabase && this.getDataPrepopulatorService().prepopulate();
+
+    this.repositoryProvider = makeProvider(this.applicationFeed, this.getPrefsProviderService());
   }
 
   getRepository(entity: Entities) {
@@ -61,7 +65,7 @@ export class Protowallet {
 
   getDataPrepopulatorService() {
     if (this.dataPrepopulatorService === null) {
-      this.dataPrepopulatorService = new DataPrepopulatorService(this.repositoryProvider);
+      this.dataPrepopulatorService = new DataPrepopulatorService(this.repositoryProvider, this.getPrefsProviderService());
     }
     return this.dataPrepopulatorService;
   }
@@ -71,6 +75,7 @@ export class Protowallet {
       this.analyticsService = new AnalyticsService(
         this.getTransactionsManager(),
         this.getTransactionAggregatorService(),
+        this.getPrefsProviderService(),
       );
     }
     return this.analyticsService;
@@ -83,6 +88,7 @@ export class Protowallet {
         this.getTransactionsManager(),
         this.getTransactionAggregatorService(),
         this.getTransactionGroupingService(),
+        this.getPrefsProviderService(),
       );
     }
     return this.accountsService;
@@ -104,7 +110,7 @@ export class Protowallet {
 
   getTransactionAggregatorService() {
     if (this.transactionAggregatorService === null) {
-      this.transactionAggregatorService = new TransactionAggregationsService();
+      this.transactionAggregatorService = new TransactionAggregationsService(this.getPrefsProviderService());
     }
     return this.transactionAggregatorService;
   }
@@ -123,6 +129,13 @@ export class Protowallet {
     return this.persistenceService;
   }
 
+  getPrefsProviderService() {
+    if (this.prefsProviderService === null) {
+      this.prefsProviderService = new PrefsProvider(this.applicationFeed);
+    }
+    return this.prefsProviderService;
+  }
+
   getUnderlyingDb() {
     return this.lokiDb;
   }
@@ -132,6 +145,7 @@ export class Protowallet {
     const dbUnderlyingName = dbName + '.protodb';
     const isNewDb = await checkNewDb(dbUnderlyingName, mode);
     const lokiDb = await getDb(dbUnderlyingName, mode, isNewDb, options.dbAutoSaveCB);
+    await applyMigrations(lokiDb);
     return new Protowallet(options, lokiDb, isNewDb);
   }
 }
@@ -160,10 +174,7 @@ const getDb = (dbName: string, mode: ApplicationMode, isNewDb: boolean, autosave
       autosaveCallback: autosaveCb,
     });
 
-    if (isNewDb) {
-      initializeFeed(lokiDb);
-      resolve(lokiDb);
-    } else {
+    if (!isNewDb) {
       lokiDb.loadDatabase({}, (err) => {
         if (err) {
           reject(err);
@@ -171,6 +182,8 @@ const getDb = (dbName: string, mode: ApplicationMode, isNewDb: boolean, autosave
           resolve(lokiDb);
         }
       });
+    } else {
+      resolve(lokiDb);
     }
   });
 };

@@ -1,13 +1,14 @@
 import { Budget, IdEntity } from '@protowallet/types';
 import { AbstractRepositoryAdapter } from './base';
 import { EntityNotFoundException, utils } from '@protowallet/common';
+import { PrefsProvider } from '../services/prefs-manager';
 
 export type CreateBudgetOptions = Omit<Budget, 'id' | 'createdAt' | 'isRecurring'>;
 export type UpdateBudgetOptions = Partial<Omit<Budget, 'createdAt' | 'isRecurring'>> & IdEntity;
 
 export class BudgetRepository extends AbstractRepositoryAdapter<Budget> {
-  constructor(feed: Collection<Budget>) {
-    super(feed);
+  constructor(feed: Collection<Budget>, prefs: PrefsProvider) {
+    super(feed, prefs);
   }
 
   async create(options: CreateBudgetOptions): Promise<Budget> {

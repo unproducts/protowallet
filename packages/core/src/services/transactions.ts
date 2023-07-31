@@ -23,6 +23,7 @@ import { RepositoryProvider } from '../repository-provider';
 import { Currency, RecordDirection, RecordType } from '@protowallet/lookups';
 import { RecurringEntityFlattener, RecurringEntityToFlatMapper } from './recurring-entity';
 import { klass } from '@protowallet/common';
+import { PrefsProvider } from './prefs-manager';
 
 
 export type CreateTransferTxnOption = Omit<CreateTransactionOptions, 'accountId' | 'type' | 'amount'> & {
@@ -97,6 +98,12 @@ export class TransactionsManager {
 }
 
 export class TransactionAggregationsService {
+  private prefsProvider: PrefsProvider;
+
+  constructor(prefsProvider: PrefsProvider) {
+    this.prefsProvider = prefsProvider;
+  }
+
   // Aggregations
   async aggregateTransactionsAmount(transactions: Transaction[], initialBalance: number = 0): Promise<Amount> {
     let currentBalance = initialBalance;
@@ -115,13 +122,13 @@ export class TransactionAggregationsService {
       return {
         direction: RecordDirection.Left,
         value: currentBalance * -1,
-        currency: Currency.INR,
+        currency: this.prefsProvider.getPreferredCurrency(),
       };
     } else {
       return {
         direction: RecordDirection.Right,
         value: currentBalance,
-        currency: Currency.INR,
+        currency: this.prefsProvider.getPreferredCurrency(),
       };
     }
   }

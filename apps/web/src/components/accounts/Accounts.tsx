@@ -10,6 +10,7 @@ import { NewAccountButton } from './NewUpdateAccountAction';
 
 function Accounts() {
   const proto = useProto();
+  const prefs = proto.getPrefsProviderService();
   const accountsRepository = proto.getRepository(EntitiesEnum.Account) as AccountRepository;
   const accountsService = proto.getAccountsService();
 
@@ -52,7 +53,7 @@ function Accounts() {
         {accounts.map((account) => (
           <div className="col-span-3 p-1" key={account.id}>
             {/* TODO: Get currency from prefs. */}
-            <AccountCard account={account} currency={Currency.INR} updateAccountFn={updateAccount} deleteAccountFn={deleteAccount} />
+            <AccountCard account={account} currency={prefs.getPreferredCurrency()} updateAccountFn={updateAccount} deleteAccountFn={deleteAccount} />
           </div>
         ))}
       </div>

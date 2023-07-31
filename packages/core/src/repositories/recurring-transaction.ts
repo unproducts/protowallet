@@ -3,6 +3,7 @@ import { AbstractRepositoryAdapter } from './base';
 import { EntityNotFoundException, EntityNotValidException, utils } from '@protowallet/common';
 import { AccountRepository } from './account';
 import { EndRecurrenceBy } from '@protowallet/lookups';
+import { PrefsProvider } from '../services/prefs-manager';
 
 export type CreateRecurringTransactionOptions = Omit<RecurringTransaction, 'id'>;
 export type UpdateRecurringTransactionOptions = Partial<RecurringTransaction> & IdEntity;
@@ -17,8 +18,8 @@ export type FindRecurringTransactionsOptions = {
 export class RecurringTransactionRepository extends AbstractRepositoryAdapter<RecurringTransaction> {
   protected accountsRepository: AccountRepository;
 
-  constructor(feed: Collection<RecurringTransaction>, accountsRepository: AccountRepository) {
-    super(feed);
+  constructor(feed: Collection<RecurringTransaction>, accountsRepository: AccountRepository, prefs: PrefsProvider) {
+    super(feed, prefs);
     this.accountsRepository = accountsRepository;
   }
 

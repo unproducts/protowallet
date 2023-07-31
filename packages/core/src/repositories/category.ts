@@ -2,6 +2,7 @@ import { Category, DetailedCategory, IdEntity } from '@protowallet/types';
 import { AbstractRepositoryAdapter } from './base';
 import { EntityNotFoundException, EntityNotValidException, GeneralProtoException } from '@protowallet/common';
 import { utils } from '@protowallet/common';
+import { PrefsProvider } from '../services/prefs-manager';
 
 export type CreateCategoryOptions = Omit<Category, 'id' | 'createdAt'>;
 
@@ -9,8 +10,8 @@ export type CreateCategoryOptions = Omit<Category, 'id' | 'createdAt'>;
 export type UpdateCategoryOptions = Partial<Omit<Category, 'parent' | 'logoId' | 'createdAt'>> & IdEntity;
 
 export class CategoryRepository extends AbstractRepositoryAdapter<Category> {
-  constructor(feed: Collection<Category>) {
-    super(feed);
+  constructor(feed: Collection<Category>, prefs: PrefsProvider) {
+    super(feed, prefs);
   }
 
   async getAll_Detailed(): Promise<DetailedCategory[]> {

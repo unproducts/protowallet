@@ -6,6 +6,7 @@ import { CreateTransactionOptions, UpdateTransactionOptions } from '@protowallet
 import { Currency, RecordDirection, RecordType } from '@protowallet/lookups';
 import { OkCancelAction } from '../../constants/enums';
 import { CreateTransferTxnOption } from '@protowallet/core/dist/services';
+import { usePrefs } from '../../hooks/use-prefs';
 
 export type TransactionFormProps = {
   transaction?: Transaction;
@@ -32,15 +33,17 @@ export type SelectApi<T> = {
   label: keyof T;
 };
 
-const getAmount = (amountRaw: number, type: RecordType): Amount => {
+const getAmount = (amountRaw: number, type: RecordType, currency: Currency): Amount => {
   return {
     value: Math.abs(amountRaw),
     direction: type == RecordType.Income ? RecordDirection.Right : RecordDirection.Left,
-    currency: Currency.INR,
+    currency,
   };
 };
 
 export default function TransactionForm(props: TransactionFormProps) {
+  const prefs = usePrefs();
+
   // Options Data
   const accountsAvailable = props.accounts.map((acc) => itemToSelectApi(acc, 'name'));
   const labelsAvailable = props.labels.map((label) => itemToSelectApi(label, 'value'));
@@ -75,7 +78,7 @@ export default function TransactionForm(props: TransactionFormProps) {
         props.updateFn({
           id: transaction?.id || 0,
           title,
-          amount: getAmount(amountRaw, recordType),
+          amount: getAmount(amountRaw, recordType, prefs.getPreferredCurrency()),
           type: recordType,
           note,
           createdAt: selectedDates[0],
@@ -89,7 +92,7 @@ export default function TransactionForm(props: TransactionFormProps) {
           props.transferFn({
             title,
             amountRaw: Math.abs(amountRaw),
-            currency: Currency.INR,
+            currency: prefs.getPreferredCurrency(),
             note,
             createdAt: selectedDates[0],
             fromAccountId: fromAccount?.value.id || 0,
@@ -101,7 +104,7 @@ export default function TransactionForm(props: TransactionFormProps) {
         props.createFn &&
           props.createFn({
             title,
-            amount: getAmount(amountRaw, recordType),
+            amount: getAmount(amountRaw, recordType, prefs.getPreferredCurrency()),
             type: recordType,
             note,
             createdAt: selectedDates[0],

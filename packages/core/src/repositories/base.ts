@@ -2,6 +2,7 @@ import { Collection } from 'lokijs';
 
 import { GeneralTimestamedEntity, IdEntity } from '@protowallet/types';
 import { EntityCreationException, EntityNotFoundException, EntityUpdateException } from '@protowallet/common';
+import { PrefsProvider } from '../services/prefs-manager';
 
 export type UpdateDTO<T extends IdEntity> = Omit<Partial<T>, 'id'>;
 
@@ -19,9 +20,11 @@ export interface Repository<T extends IdEntity & GeneralTimestamedEntity> {
 
 export abstract class AbstractRepositoryAdapter<T extends IdEntity & GeneralTimestamedEntity> implements Repository<T> {
   protected feed: Collection<T>;
+  protected prefsProvider: PrefsProvider;
 
-  constructor(feed: Collection<T>) {
+  constructor(feed: Collection<T>, prefs: PrefsProvider) {
     this.feed = feed;
+    this.prefsProvider = prefs;
   }
 
   get(id: number): T | null {

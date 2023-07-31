@@ -1,13 +1,14 @@
 import { IdEntity, Label } from '@protowallet/types';
 import { AbstractRepositoryAdapter } from './base';
 import { EntityNotFoundException, EntityNotValidException, utils } from '@protowallet/common';
+import { PrefsProvider } from '../services/prefs-manager';
 
 export type CreateLabelOptions = Omit<Label, 'id' | 'createdAt'>;
 export type UpdateLabelOptions = Partial<Label> & IdEntity;
 
 export class LabelRepository extends AbstractRepositoryAdapter<Label> {
-  constructor(feed: Collection<Label>) {
-    super(feed);
+  constructor(feed: Collection<Label>, prefs: PrefsProvider) {
+    super(feed, prefs);
   }
 
   async create(options: CreateLabelOptions): Promise<Label> {

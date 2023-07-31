@@ -1,7 +1,8 @@
 import { Amount, StrictRange } from '@protowallet/types';
 import { TransactionAggregationsService, TransactionsManager } from './transactions';
-import { Currency, RecordDirection, RecordType } from '@protowallet/lookups';
+import { RecordDirection, RecordType } from '@protowallet/lookups';
 import { klass, utils } from '@protowallet/common';
+import { PrefsProvider } from './prefs-manager';
 
 export type IncomeExpenseCashFlowChartData = {
   dates: Date[];
@@ -13,15 +14,18 @@ export class AnalyticsService {
   private transactionsManager: TransactionsManager;
   // private accountsService: AccountsService;
   private transactionsAggregatorService: TransactionAggregationsService;
+  private prefsProvider: PrefsProvider;
 
   constructor(
     transactionsManager: TransactionsManager,
     // accountsService: AccountsService,
     transactionsAggregatorService: TransactionAggregationsService,
+    prefsProvider: PrefsProvider,
   ) {
     this.transactionsManager = transactionsManager;
     // this.accountsService = accountsService;
     this.transactionsAggregatorService = transactionsAggregatorService;
+    this.prefsProvider = prefsProvider;
   }
 
   async getIncomeExpenseCashFlowChartData(dateRange: StrictRange<Date>): Promise<IncomeExpenseCashFlowChartData> {
@@ -37,8 +41,8 @@ export class AnalyticsService {
 
     return {
       dates: allDates.map((date) => date.toDate()),
-      income: allDates.map((date) => incomeData.get(date) || { value: 0, currency: Currency.INR, direction: RecordDirection.Right }),
-      expense: allDates.map((date) => expenseData.get(date) || { value: 0, currency: Currency.INR, direction: RecordDirection.Right })
+      income: allDates.map((date) => incomeData.get(date) || { value: 0, currency: this.prefsProvider.getPreferredCurrency(), direction: RecordDirection.Right }),
+      expense: allDates.map((date) => expenseData.get(date) || { value: 0, currency: this.prefsProvider.getPreferredCurrency(), direction: RecordDirection.Right })
     };
   }
 

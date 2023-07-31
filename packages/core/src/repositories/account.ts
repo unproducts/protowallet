@@ -1,7 +1,8 @@
 import { Account } from '@protowallet/types';
 import { AbstractRepositoryAdapter } from './base';
 import { EntityNotFoundException, EntityNotValidException, config, utils } from '@protowallet/common';
-import { Currency, RecordDirection } from '@protowallet/lookups';
+import { RecordDirection } from '@protowallet/lookups';
+import { PrefsProvider } from '../services/prefs-manager';
 
 export type CreateAccountOptions = Omit<Partial<Account>, 'id' | 'createdAt'> & {
   name: string;
@@ -12,8 +13,8 @@ export type UpdateAccountOptions = Omit<Partial<Account>, 'createdAt'> & {
 };
 
 export class AccountRepository extends AbstractRepositoryAdapter<Account> {
-  constructor(feed: Collection<Account>) {
-    super(feed);
+  constructor(feed: Collection<Account>, prefs: PrefsProvider) {
+    super(feed, prefs);
   }
 
   async create(options: CreateAccountOptions): Promise<Account> {
@@ -23,7 +24,7 @@ export class AccountRepository extends AbstractRepositoryAdapter<Account> {
       name: options.name,
       index: index,
       accent: options.accent || 1,
-      initialBalance: options.initialBalance || { value: 0, currency: Currency.INR, direction: RecordDirection.Right },
+      initialBalance: options.initialBalance || { value: 0, currency: this.prefsProvider.getPreferredCurrency(), direction: RecordDirection.Right },
       createdAt: new Date(),
     };
 

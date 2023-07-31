@@ -2,6 +2,7 @@ import { IdEntity, StrictRange, Transaction } from '@protowallet/types';
 import { AbstractRepositoryAdapter } from './base';
 import { AccountRepository } from './account';
 import { EntityNotFoundException, EntityNotValidException, utils } from '@protowallet/common';
+import { PrefsProvider } from '../services/prefs-manager';
 
 export type CreateTransactionOptions = Omit<Transaction, 'id' | 'isRecurringTransaction'>;
 export type UpdateTransactionOptions = Omit<Partial<Transaction> & IdEntity, 'isRecurringTransaction'>;
@@ -17,8 +18,8 @@ export type FindTransactionsOptions = {
 export class TransactionRepository extends AbstractRepositoryAdapter<Transaction> {
   protected accountsRepository: AccountRepository;
 
-  constructor(feed: Collection<Transaction>, accountsRepository: AccountRepository) {
-    super(feed);
+  constructor(feed: Collection<Transaction>, accountsRepository: AccountRepository, prefs: PrefsProvider) {
+    super(feed, prefs);
     this.accountsRepository = accountsRepository;
   }
 
