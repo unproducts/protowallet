@@ -20,7 +20,7 @@
     "react-dom": "^18.2.0",
     "react-flatpickr": "^3.10.13",
     "react-js-cron": "^4.0.0",
-    "react-router-dom": "^6.3.0",
+    "react-router-dom": "^6.14.2",
     "react-select": "^5.7.0",
     "react-transition-group": "^4.4.2"
   },
