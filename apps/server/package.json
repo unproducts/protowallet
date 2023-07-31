@@ -1,6 +1,6 @@
 {
   "name": "@protowallet/server",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Protowallet application server with server-side data storage capabilities",
   "main": "dist/index.js",
   "type": "module",

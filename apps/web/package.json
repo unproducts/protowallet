@@ -1,6 +1,6 @@
 {
   "name": "@protowallet/web",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "scripts": {
     "dev": "REACT_APP_PROTO_MODE=web vite",
     "build": "REACT_APP_PROTO_MODE=web vite build",

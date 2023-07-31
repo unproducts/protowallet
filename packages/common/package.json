@@ -1,6 +1,6 @@
 {
   "name": "@protowallet/common",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Common erros / utilites / configs for Protowallet",
   "module": "./dist/index.js",
   "typings": "./dist/index.d.ts",
