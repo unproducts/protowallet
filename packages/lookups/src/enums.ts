@@ -37,6 +37,11 @@ export enum RecordDirection {
   Left,
 }
 
+export enum GeneralDocumentIds {
+  PREFS = 1,
+  MIGRATION_META_DATA = 2,
+}
+
 export enum EndRecurrenceBy {
   Count = "Count",
   EndDate = "EndDate",

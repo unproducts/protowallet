@@ -5,3 +5,4 @@ export * from './category';
 export * from './general';
 export * from './label';
 export * from './transaction';
+export * from './documents';
