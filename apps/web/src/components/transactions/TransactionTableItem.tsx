@@ -7,6 +7,7 @@ import EditIcon from '../../icons/EditIcon';
 import DeleteIcon from '../../icons/DeleteIcon';
 import NewUpdateTransactionAction from './NewUpdateTransactionAction';
 import RecurringTransactionIcon from '../../icons/RecurringTransactionIcon';
+import TransactionIcon from '../../icons/TransactionIcon';
 
 export type TransactionsTableItemProps = {
   transaction: Transaction;
@@ -43,7 +44,7 @@ function TransactionsTableItem(props: TransactionsTableItemProps) {
   return (
     <tr>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-1/12">
-        {!transaction.isRecurringTransaction && (
+        {!(transaction.isRecurringTransaction || transaction.type == RecordType.Transfer) && (
           <span className="flex items-center">
             <NewUpdateTransactionAction
               buttonClassName={'text-slate-400 hover:text-slate-500 rounded-lg border p-2 mr-1'}
@@ -69,6 +70,11 @@ function TransactionsTableItem(props: TransactionsTableItemProps) {
         {transaction.isRecurringTransaction && (
           <span className="flex items-center justify-center">
             <RecurringTransactionIcon className="w-5 h-5" />
+          </span>
+        )}
+        {transaction.type ==  RecordType.Transfer && (
+          <span className="flex items-center justify-center text-slate-400">
+            <TransactionIcon className="w-5 h-5" />
           </span>
         )}
       </td>
