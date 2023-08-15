@@ -18,6 +18,7 @@ import { ApplicationMode } from '@protowallet/types';
 import SelectorScreen from './components/selector-screen/SelectorScreen';
 import Transactions from './components/transactions/Transactions';
 import HomePage from './components/home/Home';
+import AssistantPage from './components/assistant/Assistant';
 
 function App() {
   const location = useLocation();
@@ -63,6 +64,7 @@ function App() {
             <GeneralLayout derefProto={derefProto} dbName={dbName}>
               <Routes>
                 <Route path="/home" element={<HomePage />} />
+                <Route path="/assistant" element={<AssistantPage/>} />
                 <Route path="/analytics" element={ComingSoonPage} />
                 <Route path="/budgets" element={ComingSoonPage} />
                 <Route path="/accounts" element={<Accounts />} />

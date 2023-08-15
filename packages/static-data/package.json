@@ -15,7 +15,7 @@
     "build": "tsc"
   },
   "devDependencies": {
-    "@protowallet/types": "^1.0.0",
+    "@protowallet/types": "^0.0.2",
     "@types/breejs__later": "^4.1.2",
     "@types/lokijs": "^1.5.8"
   }

@@ -10,5 +10,13 @@
     }
   },
   "license": "MIT",
-  "private": false
+  "private": false,
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "langchain": "^0.0.123",
+    "pdfjs-dist": "^3.8.162"
+  },
+  "devDependencies": {}
 }

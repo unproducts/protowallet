@@ -8,9 +8,10 @@
     "preview:tail": "tailwind-config-viewer -p 3040 -c ./src/css/tailwind.config.js"
   },
   "dependencies": {
-    "@protowallet/common": "^1.0.0",
-    "@protowallet/core": "^1.0.0",
-    "@protowallet/types": "^1.0.0",
+    "@protowallet/common": "^0.0.2",
+    "@protowallet/core": "^0.0.2",
+    "@protowallet/types": "^0.0.2",
+    "@protowallet/llm": "^0.0.2",
     "@tailwindcss/forms": "^0.5.2",
     "antd": "^5.7.0",
     "chart.js": "^3.8.0",

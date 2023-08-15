@@ -9,6 +9,6 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@protowallet/lookups": "1.0.0"
+    "@protowallet/lookups": "^0.0.2"
   }
 }
