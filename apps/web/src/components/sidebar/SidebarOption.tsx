@@ -12,6 +12,7 @@ import TriggersIcon from '../../icons/TriggersIcon';
 import HomeIcon from '../../icons/HomeIcon';
 import BudgetIcon from '../../icons/BudgetIcon';
 import RecurringTransactionIcon from '../../icons/RecurringTransactionIcon';
+import GPTIcon from '../../icons/GPTIcon';
 
 export type SidebarOptionProps = {
   pathName: string;
@@ -30,6 +31,7 @@ const IconsRecord: Record<string, React.FC<IconProps>> = {
   TriggersIcon,
   BudgetIcon,
   RecurringTransactionIcon,
+  GPTIcon,
 };
 
 const SidebarOption = (props: SidebarOptionProps) => {

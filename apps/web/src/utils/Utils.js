@@ -5,6 +5,15 @@ export const tailwindConfig = () => {
   return resolveConfig('./src/css/tailwind.config.js');
 };
 
+export const fileToDataUri = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      resolve(new Blob([new Uint8Array(event.target.result)], {type: file.type }));
+    };
+    reader.readAsArrayBuffer(file);
+  });
+
 export const hexToRGB = (h) => {
   let r = 0;
   let g = 0;

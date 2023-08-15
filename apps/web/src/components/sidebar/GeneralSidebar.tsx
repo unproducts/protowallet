@@ -8,6 +8,7 @@ function GeneralSidebar() {
       <div>
         <ul className="flex flex-nowrap md:block mr-3 md:mr-0">
           <SidebarOption pathName="/home" icon="HomeIcon" label="Home" />
+          <SidebarOption pathName="/assistant" icon="GPTIcon" label="AI Assistant" />
           <SidebarOption pathName="/budgets" icon="BudgetIcon" label="Budgets" />
           <SidebarOption pathName="/transactions" icon="TransactionIcon" label="Transactions" />
           <SidebarOption pathName="/accounts" icon="AccountIcon" label="Accounts" />
